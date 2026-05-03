@@ -1,1 +1,0 @@
-# simplegear-site
