@@ -318,11 +318,27 @@ function preferredLanguage() {
   if (queryLanguage) {
     return normalizeLanguage(queryLanguage);
   }
-  const savedLanguage = window.localStorage.getItem('peerlink.site.language');
+  const savedLanguage = readSavedLanguage();
   if (savedLanguage) {
     return normalizeLanguage(savedLanguage);
   }
   return normalizeLanguage(window.navigator.language);
+}
+
+function readSavedLanguage() {
+  try {
+    return window.localStorage.getItem('peerlink.site.language');
+  } catch (_) {
+    return null;
+  }
+}
+
+function saveLanguage(language) {
+  try {
+    window.localStorage.setItem('peerlink.site.language', language);
+  } catch (_) {
+    // Some browsers block storage for static pages; language switching must still work.
+  }
 }
 
 function setMeta(name, content) {
@@ -342,7 +358,7 @@ function setOpenGraph(property, content) {
 function applyLanguage(language) {
   const activeLanguage = normalizeLanguage(language);
   document.documentElement.lang = activeLanguage;
-  window.localStorage.setItem('peerlink.site.language', activeLanguage);
+  saveLanguage(activeLanguage);
 
   document.querySelectorAll('[data-i18n]').forEach((node) => {
     node.textContent = translate(node.dataset.i18n, activeLanguage);
