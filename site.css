@@ -39,7 +39,59 @@ a {
 .shell {
   margin: 0 auto;
   max-width: 1120px;
-  padding: 40px 20px 64px;
+  padding: 20px 20px 64px;
+}
+
+.site-bar {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: 22px 20px 0;
+}
+
+.brand {
+  align-items: center;
+  color: var(--ink);
+  display: inline-flex;
+  font-weight: 900;
+  gap: 12px;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+
+.brand img {
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(76, 140, 255, 0.22);
+}
+
+.language-switcher {
+  background: rgba(16, 28, 51, 0.7);
+  border: 1px solid rgba(33, 57, 95, 0.9);
+  border-radius: 999px;
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+}
+
+.language-switcher button {
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 9px 11px;
+}
+
+.language-switcher button.active {
+  background: linear-gradient(135deg, var(--accent), #73a6ff);
+  color: white;
 }
 
 .hero {
@@ -190,25 +242,27 @@ h2 {
   margin-top: 20px;
 }
 
-.language-list {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin-top: 20px;
-}
-
-.language-list article {
+.language-panel {
+  align-items: start;
   background: var(--surface-muted);
   border: 1px solid var(--stroke);
   border-radius: 22px;
-  padding: 18px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto minmax(0, 1fr);
+  margin-top: 20px;
+  padding: 20px;
 }
 
-.language-list span {
+.language-panel span {
   color: var(--pine);
   font-size: 0.8rem;
   font-weight: 900;
   letter-spacing: 0.12em;
+}
+
+.language-panel p {
+  margin: 0;
 }
 
 .split {
@@ -231,8 +285,10 @@ h2 {
 }
 
 .store {
+  align-items: center;
   background: var(--surface-muted);
   border: 1px solid var(--stroke);
+  flex-direction: column;
   min-width: 170px;
   padding: 16px 22px;
   text-align: center;
@@ -251,9 +307,17 @@ h2 {
 @media (max-width: 860px) {
   .hero,
   .grid,
-  .language-list,
   .split {
     grid-template-columns: 1fr;
+  }
+
+  .site-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .language-switcher {
+    justify-content: space-between;
   }
 
   .hero-copy {

@@ -16,30 +16,44 @@
   <link rel="stylesheet" href="/site.css">
   <title>PeerLink Messenger</title>
 </head>
-<body>
+<body data-page="home">
+  <header class="site-bar">
+    <a class="brand" href="/" aria-label="PeerLink">
+      <img src="/icons/Icon-192.png" alt="" width="42" height="42">
+      <span>PeerLink</span>
+    </a>
+    <nav class="language-switcher" data-i18n-attr="aria-label:common.languageAria" aria-label="Language">
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="ru">RU</button>
+      <button type="button" data-lang="es">ES</button>
+      <button type="button" data-lang="zh">ZH</button>
+      <button type="button" data-lang="fr">FR</button>
+    </nav>
+  </header>
+
   <main class="shell">
     <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">Open-source secure messenger</p>
+        <p class="eyebrow" data-i18n="home.heroEyebrow">Open-source secure messenger</p>
         <h1>PeerLink</h1>
-        <p class="lead">
+        <p class="lead" data-i18n="home.lead">
           Private direct and group messaging, calls, media sharing, and self-hosted communication servers.
         </p>
         <div class="hero-actions">
-          <a class="button primary" href="#download">Download</a>
-          <a class="button ghost" href="#source">Source code</a>
+          <a class="button primary" href="#download" data-i18n="common.download">Download</a>
+          <a class="button ghost" href="#source" data-i18n="common.sourceCode">Source code</a>
         </div>
       </div>
       <div class="hero-card" id="invite-card" hidden>
         <span class="status-dot"></span>
-        <h2>Invite detected</h2>
-        <p>Opening PeerLink. If nothing happens, tap the button below.</p>
-        <a class="button primary" id="open-invite-link" href="#">Open PeerLink</a>
+        <h2 data-i18n="invite.detectedTitle">Invite detected</h2>
+        <p id="invite-message" data-i18n="invite.openingMessage">Opening PeerLink. If nothing happens, tap the button below.</p>
+        <a class="button primary" id="open-invite-link" href="#" data-i18n="common.openPeerLink">Open PeerLink</a>
       </div>
       <div class="hero-card" id="trust-card">
         <span class="status-dot"></span>
-        <h2>Nothing hidden</h2>
-        <p>
+        <h2 data-i18n="home.trustTitle">Nothing hidden</h2>
+        <p data-i18n="home.trustBody">
           PeerLink keeps the app and server code public so anyone can inspect how communication works.
         </p>
       </div>
@@ -47,68 +61,56 @@
 
     <section class="grid" aria-label="Features">
       <article>
-        <h2>Private by design</h2>
-        <p>PeerLink focuses on peer identity, encrypted messaging, calls, and media without hiding the implementation.</p>
+        <h2 data-i18n="home.privateTitle">Private by design</h2>
+        <p data-i18n="home.privateBody">PeerLink focuses on peer identity, encrypted messaging, calls, and media without hiding the implementation.</p>
       </article>
       <article>
-        <h2>Self-host friendly</h2>
-        <p>Run your own bootstrap, relay, and TURN servers when you want control over the infrastructure path.</p>
+        <h2 data-i18n="home.selfHostTitle">Self-host friendly</h2>
+        <p data-i18n="home.selfHostBody">Run your own bootstrap, relay, and TURN servers when you want control over the infrastructure path.</p>
       </article>
       <article>
-        <h2>Resilient delivery</h2>
-        <p>Relay-assisted messages and media help peers reconnect and recover across network changes.</p>
+        <h2 data-i18n="home.resilientTitle">Resilient delivery</h2>
+        <p data-i18n="home.resilientBody">Relay-assisted messages and media help peers reconnect and recover across network changes.</p>
       </article>
     </section>
 
-    <section class="languages" aria-label="PeerLink description in supported languages">
-      <h2>About PeerLink</h2>
-      <div class="language-list">
-        <article lang="en">
-          <span>EN</span>
-          <p>PeerLink is a private open-source messenger for direct chats, group chats, calls, media, and self-hosted network servers.</p>
-        </article>
-        <article lang="ru">
-          <span>RU</span>
-          <p>PeerLink — приватный мессенджер с открытым исходным кодом для личных и групповых чатов, звонков, медиа и собственных сетевых серверов.</p>
-        </article>
-        <article lang="es">
-          <span>ES</span>
-          <p>PeerLink es un mensajero privado de código abierto para chats directos y grupales, llamadas, archivos multimedia y servidores propios.</p>
-        </article>
-        <article lang="zh">
-          <span>ZH</span>
-          <p>PeerLink 是一款开源隐私通讯应用，支持私聊、群聊、通话、媒体分享以及自托管网络服务器。</p>
-        </article>
-        <article lang="fr">
-          <span>FR</span>
-          <p>PeerLink est une messagerie privée open source pour les discussions directes et de groupe, les appels, les médias et les serveurs auto-hébergés.</p>
-        </article>
+    <section class="languages" aria-label="PeerLink description">
+      <h2 data-i18n="home.aboutTitle">About PeerLink</h2>
+      <div class="language-panel">
+        <span data-current-lang>EN</span>
+        <p data-i18n="home.aboutBody">PeerLink is a private open-source messenger for direct chats, group chats, calls, media, and self-hosted network servers.</p>
       </div>
     </section>
 
     <section class="split" id="source">
       <div>
-        <p class="eyebrow">Open source</p>
-        <h2>Inspect the code yourself</h2>
-        <p>
+        <p class="eyebrow" data-i18n="home.sourceEyebrow">Open source</p>
+        <h2 data-i18n="home.sourceTitle">Inspect the code yourself</h2>
+        <p data-i18n="home.sourceBody">
           We do not ask users to trust a black box. The mobile app and server stack are public.
         </p>
       </div>
       <div class="link-stack">
-        <a href="https://github.com/simplegear-org/peerlink" rel="noopener">PeerLink app repository</a>
-        <a href="https://github.com/simplegear-org/peerlink_servers" rel="noopener">PeerLink servers repository</a>
+        <a href="https://github.com/simplegear-org/peerlink" rel="noopener" data-i18n="common.appRepository">PeerLink app repository</a>
+        <a href="https://github.com/simplegear-org/peerlink_servers" rel="noopener" data-i18n="common.serverRepository">PeerLink servers repository</a>
       </div>
     </section>
 
     <section class="split" id="download">
       <div>
-        <p class="eyebrow">Download</p>
-        <h2>Store links</h2>
-        <p>App Store and Google Play pages are coming. The buttons are placeholders for now.</p>
+        <p class="eyebrow" data-i18n="home.downloadEyebrow">Download</p>
+        <h2 data-i18n="home.downloadTitle">Store links</h2>
+        <p data-i18n="home.downloadBody">App Store and Google Play pages are coming. The buttons are placeholders for now.</p>
       </div>
       <div class="store-buttons">
-        <a class="store disabled" href="#" aria-disabled="true">App Store<br><small>coming soon</small></a>
-        <a class="store disabled" href="#" aria-disabled="true">Google Play<br><small>coming soon</small></a>
+        <a class="store disabled" href="#" aria-disabled="true">
+          <span data-i18n="common.appStore">App Store</span>
+          <small data-i18n="common.comingSoon">coming soon</small>
+        </a>
+        <a class="store disabled" href="#" aria-disabled="true">
+          <span data-i18n="common.googlePlay">Google Play</span>
+          <small data-i18n="common.comingSoon">coming soon</small>
+        </a>
       </div>
     </section>
   </main>
