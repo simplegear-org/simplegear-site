@@ -3,44 +3,106 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SimpleGear — цифровые решения</title>
-  <meta name="description" content="SimpleGear — разработка сайтов, приложений и цифровых продуктов.">
+  <title>SimpleGear — build simple, ship strong</title>
+  <meta name="description" content="SimpleGear помогает запускать сайты, приложения, инфраструктуру и автоматизацию.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="page">
+  <div class="noise"></div>
+
+  <header class="nav">
+    <a class="logo" href="#">
+      <span class="logo-mark">SG</span>
+      <span>SimpleGear</span>
+    </a>
+    <nav>
+      <a href="#services">Услуги</a>
+      <a href="#process">Процесс</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+  </header>
+
+  <main>
     <section class="hero">
-      <div class="badge">SimpleGear.org</div>
-      <h1>Простые цифровые решения для сложных задач</h1>
-      <p>
-        Разработка сайтов, мобильных приложений, backend-сервисов и автоматизации
-        для бизнеса и личных проектов.
-      </p>
-      <div class="actions">
-        <a class="button primary" href="mailto:hello@simplegear.org">Связаться</a>
-        <a class="button secondary" href="#services">Услуги</a>
+      <div class="hero-content">
+        <div class="eyebrow">Сайты • Приложения • Инфраструктура</div>
+        <h1>Технологии, которые выглядят просто и работают надежно.</h1>
+        <p>
+          SimpleGear проектирует и запускает аккуратные цифровые продукты:
+          от сайта-визитки до MVP, мобильного приложения или Docker-инфраструктуры.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-dark" href="mailto:hello@simplegear.org">Обсудить проект</a>
+          <a class="btn btn-light" href="#services">Что делаем</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="card-top">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="metric">
+          <small>Focus</small>
+          <strong>Clean launch</strong>
+        </div>
+        <div class="progress">
+          <span style="width: 82%"></span>
+        </div>
+        <div class="mini-grid">
+          <div>Web</div>
+          <div>Flutter</div>
+          <div>Docker</div>
+          <div>HTTPS</div>
+        </div>
       </div>
     </section>
 
-    <section id="services" class="cards">
-      <article>
-        <h2>Сайты</h2>
-        <p>Лендинги, сайты-визитки, корпоративные страницы и документация.</p>
-      </article>
-      <article>
-        <h2>Приложения</h2>
-        <p>Flutter, мобильные интерфейсы, MVP и кроссплатформенная разработка.</p>
-      </article>
-      <article>
-        <h2>Инфраструктура</h2>
-        <p>Docker, прокси, домены, HTTPS, VPN и базовая серверная настройка.</p>
-      </article>
+    <section id="services" class="section">
+      <div class="section-head">
+        <span>Services</span>
+        <h2>Что можно разместить на этом сайте</h2>
+      </div>
+      <div class="service-grid">
+        <article>
+          <div class="icon">01</div>
+          <h3>Сайт-визитка</h3>
+          <p>Короткая страница о проекте, услугах, контактах и преимуществах.</p>
+        </article>
+        <article>
+          <div class="icon">02</div>
+          <h3>Документация</h3>
+          <p>Разделы с описанием продукта, инструкциями, privacy policy и FAQ.</p>
+        </article>
+        <article>
+          <div class="icon">03</div>
+          <h3>Портфолио</h3>
+          <p>Кейсы, скриншоты, ссылки на приложения, GitHub и демо-страницы.</p>
+        </article>
+      </div>
     </section>
 
-    <footer>
-      <span>© 2026 SimpleGear</span>
-      <a href="mailto:hello@simplegear.org">hello@simplegear.org</a>
-    </footer>
+    <section id="process" class="split">
+      <div>
+        <span class="label">Process</span>
+        <h2>Минимум лишнего, максимум пользы.</h2>
+      </div>
+      <div class="steps">
+        <div><strong>1</strong><p>Определяем цель страницы и структуру.</p></div>
+        <div><strong>2</strong><p>Публикуем сайт через GitHub Pages.</p></div>
+        <div><strong>3</strong><p>Подключаем simplegear.org и HTTPS.</p></div>
+      </div>
+    </section>
+
+    <section id="contact" class="cta">
+      <h2>Готово к публикации на GitHub Pages</h2>
+      <p>Замени тексты, email и ссылки — затем загрузи файлы в репозиторий.</p>
+      <a class="btn btn-dark" href="mailto:hello@simplegear.org">hello@simplegear.org</a>
+    </section>
   </main>
+
+  <footer>
+    <span>© 2026 SimpleGear</span>
+    <span>simplegear.org</span>
+  </footer>
 </body>
 </html>
