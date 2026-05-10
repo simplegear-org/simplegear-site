@@ -1,11 +1,16 @@
 const supportedLanguages = ['en', 'ru', 'es', 'zh', 'fr'];
 const fallbackLanguage = 'en';
-const payload = new URLSearchParams(window.location.search).get('payload');
+const searchParams = new URLSearchParams(window.location.search);
+const payload = searchParams.get('payload');
+const pairingData = searchParams.get('data');
 const openInviteLinks = Array.from(document.querySelectorAll('#open-invite-link'));
 const inviteCard = document.getElementById('invite-card');
 const trustCard = document.getElementById('trust-card');
 const inviteMessage = document.getElementById('invite-message');
 const page = document.body.dataset.page || 'home';
+const linkKind =
+  document.body.dataset.linkKind ||
+  (window.location.pathname.includes('/pair') ? 'pair' : 'invite');
 
 const strings = {
   en: {
@@ -404,8 +409,27 @@ function showInviteMissing() {
 }
 
 function configureInviteLink() {
-  if (payload) {
+  if (linkKind === 'invite' && payload) {
     const appLink = `peerlink://invite?payload=${encodeURIComponent(payload)}`;
+    if (inviteCard) {
+      inviteCard.hidden = false;
+    }
+    if (trustCard) {
+      trustCard.hidden = true;
+    }
+    openInviteLinks.forEach((link) => {
+      link.href = appLink;
+    });
+    window.setTimeout(() => {
+      window.location.href = appLink;
+    }, 350);
+    return;
+  }
+
+  if (linkKind === 'pair' && (pairingData || payload)) {
+    const appLink = pairingData
+      ? `peerlink://pair?data=${encodeURIComponent(pairingData)}`
+      : `peerlink://pair?payload=${encodeURIComponent(payload)}`;
     if (inviteCard) {
       inviteCard.hidden = false;
     }
