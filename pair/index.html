@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="/site.css?v=20260503-2">
   <title>PeerLink Device Pairing</title>
 </head>
-<body data-page="invite" data-link-kind="pair">
+<body data-page="pair" data-link-kind="pair">
   <main class="shell">
     <header class="site-bar">
       <a class="brand" href="/" aria-label="PeerLink">
@@ -25,18 +25,18 @@
       </a>
       <nav class="language-switcher" data-i18n-attr="aria-label:common.languageAria" aria-label="Language">
         <button type="button" data-lang="en">EN</button>
-        <button type="button" data-lang="ru">RU</button>
-        <button type="button" data-lang="es">ES</button>
         <button type="button" data-lang="zh">ZH</button>
+        <button type="button" data-lang="es">ES</button>
+        <button type="button" data-lang="ru">RU</button>
         <button type="button" data-lang="fr">FR</button>
       </nav>
     </header>
 
     <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">PeerLink device pairing</p>
-        <h1 data-i18n="invite.title">Open PeerLink</h1>
-        <p class="lead">
+        <p class="eyebrow" data-i18n="pair.heroEyebrow">PeerLink device pairing</p>
+        <h1 data-i18n="pair.title">Open PeerLink</h1>
+        <p class="lead" data-i18n="pair.lead">
           This page opens a PeerLink device pairing link and also explains what the messenger does.
         </p>
         <div class="hero-actions">
@@ -46,8 +46,8 @@
       </div>
       <div class="hero-card" id="invite-card">
         <span class="status-dot"></span>
-        <h2>Pairing link detected</h2>
-        <p id="invite-message">Opening PeerLink. If nothing happens, tap the button.</p>
+        <h2 data-i18n="pair.detectedTitle">Pairing link detected</h2>
+        <p id="invite-message" data-i18n="pair.openingMessage">Opening PeerLink. If nothing happens, tap the button.</p>
       </div>
     </section>
 
@@ -63,7 +63,7 @@
       <div>
         <p class="eyebrow" data-i18n="home.sourceEyebrow">Open source</p>
         <h2 data-i18n="home.trustTitle">Nothing hidden</h2>
-        <p data-i18n="invite.sourceBody">The app and server repositories are public so the communication stack can be inspected.</p>
+        <p data-i18n="pair.sourceBody">The app and server repositories are public so the communication stack can be inspected.</p>
       </div>
       <div class="link-stack">
         <a href="https://github.com/simplegear-org/peerlink" rel="noopener" data-i18n="common.appRepository">PeerLink app repository</a>

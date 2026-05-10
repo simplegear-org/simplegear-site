@@ -1,4 +1,4 @@
-const supportedLanguages = ['en', 'ru', 'es', 'zh', 'fr'];
+const supportedLanguages = ['en', 'zh', 'es', 'ru', 'fr'];
 const fallbackLanguage = 'en';
 const searchParams = new URLSearchParams(window.location.search);
 const payload = searchParams.get('payload');
@@ -60,6 +60,18 @@ const strings = {
       missingButton: 'Go to PeerLink',
       sourceBody: 'The app and server repositories are public so the communication stack can be inspected.',
     },
+    pair: {
+      metaTitle: 'PeerLink Device Pairing',
+      metaDescription: 'Open a PeerLink device pairing link or learn about the open-source PeerLink messenger.',
+      heroEyebrow: 'PeerLink device pairing',
+      title: 'Open PeerLink',
+      lead: 'This page opens a PeerLink device pairing link and also explains what the messenger does.',
+      detectedTitle: 'Pairing link detected',
+      openingMessage: 'Opening PeerLink. If nothing happens, tap the button.',
+      missingMessage: 'No pairing payload was found in this link.',
+      missingButton: 'Go to PeerLink',
+      sourceBody: 'The app and server repositories are public so the communication stack can be inspected.',
+    },
     fallback: {
       metaTitle: 'PeerLink',
       metaDescription: 'Open a PeerLink invite or return to the PeerLink landing page.',
@@ -115,6 +127,18 @@ const strings = {
       detectedTitle: 'Приглашение найдено',
       openingMessage: 'Открываем PeerLink. Если ничего не произошло, нажмите кнопку.',
       missingMessage: 'В этой ссылке не найден payload приглашения.',
+      missingButton: 'Перейти к PeerLink',
+      sourceBody: 'Репозитории приложения и серверов открыты, чтобы коммуникационный стек можно было проверить.',
+    },
+    pair: {
+      metaTitle: 'Привязка устройства PeerLink',
+      metaDescription: 'Откройте ссылку привязки PeerLink или узнайте больше об open-source приватном мессенджере.',
+      heroEyebrow: 'Привязка устройства PeerLink',
+      title: 'Открыть PeerLink',
+      lead: 'Эта страница открывает ссылку привязки PeerLink и объясняет, что умеет мессенджер.',
+      detectedTitle: 'Ссылка привязки найдена',
+      openingMessage: 'Открываем PeerLink. Если ничего не произошло, нажмите кнопку.',
+      missingMessage: 'В этой ссылке не найден payload привязки.',
       missingButton: 'Перейти к PeerLink',
       sourceBody: 'Репозитории приложения и серверов открыты, чтобы коммуникационный стек можно было проверить.',
     },
@@ -176,6 +200,18 @@ const strings = {
       missingButton: 'Ir a PeerLink',
       sourceBody: 'Los repositorios de la app y los servidores son públicos para poder revisar la pila de comunicación.',
     },
+    pair: {
+      metaTitle: 'Vinculación de dispositivo PeerLink',
+      metaDescription: 'Abre un enlace de vinculación de PeerLink o conoce el mensajero privado de código abierto.',
+      heroEyebrow: 'Vinculación de dispositivo PeerLink',
+      title: 'Abrir PeerLink',
+      lead: 'Esta página abre un enlace de vinculación de PeerLink y también explica qué hace el mensajero.',
+      detectedTitle: 'Enlace de vinculación detectado',
+      openingMessage: 'Abriendo PeerLink. Si no sucede nada, toca el botón.',
+      missingMessage: 'No se encontró payload de vinculación en este enlace.',
+      missingButton: 'Ir a PeerLink',
+      sourceBody: 'Los repositorios de la app y los servidores son públicos para poder revisar la pila de comunicación.',
+    },
     fallback: {
       metaTitle: 'PeerLink',
       metaDescription: 'Abre una invitación de PeerLink o vuelve a la página principal.',
@@ -234,6 +270,18 @@ const strings = {
       missingButton: '前往 PeerLink',
       sourceBody: '应用和服务器仓库都是公开的，因此可以检查整个通信栈。',
     },
+    pair: {
+      metaTitle: 'PeerLink 设备绑定',
+      metaDescription: '打开 PeerLink 设备绑定链接，或了解这款开源隐私通讯应用。',
+      heroEyebrow: 'PeerLink 设备绑定',
+      title: '打开 PeerLink',
+      lead: '此页面会打开 PeerLink 设备绑定链接，并说明这款通讯应用的用途。',
+      detectedTitle: '检测到绑定链接',
+      openingMessage: '正在打开 PeerLink。如果没有反应，请点击按钮。',
+      missingMessage: '此链接中没有找到绑定 payload。',
+      missingButton: '前往 PeerLink',
+      sourceBody: '应用和服务器仓库都是公开的，因此可以检查整个通信栈。',
+    },
     fallback: {
       metaTitle: 'PeerLink',
       metaDescription: '打开 PeerLink 邀请或返回 PeerLink 主页。',
@@ -289,6 +337,18 @@ const strings = {
       detectedTitle: 'Invitation détectée',
       openingMessage: 'Ouverture de PeerLink. Si rien ne se passe, touchez le bouton.',
       missingMessage: 'Aucun payload d’invitation n’a été trouvé dans ce lien.',
+      missingButton: 'Aller à PeerLink',
+      sourceBody: 'Les dépôts de l’app et des serveurs sont publics afin que la pile de communication puisse être inspectée.',
+    },
+    pair: {
+      metaTitle: 'Association d’appareil PeerLink',
+      metaDescription: 'Ouvrez un lien d’association PeerLink ou découvrez la messagerie privée open source.',
+      heroEyebrow: 'Association d’appareil PeerLink',
+      title: 'Ouvrir PeerLink',
+      lead: 'Cette page ouvre un lien d’association PeerLink et explique aussi ce que fait la messagerie.',
+      detectedTitle: 'Lien d’association détecté',
+      openingMessage: 'Ouverture de PeerLink. Si rien ne se passe, touchez le bouton.',
+      missingMessage: 'Aucun payload d’association n’a été trouvé dans ce lien.',
       missingButton: 'Aller à PeerLink',
       sourceBody: 'Les dépôts de l’app et des serveurs sont publics afin que la pile de communication puisse être inspectée.',
     },
@@ -398,17 +458,17 @@ function applyLanguage(language) {
   setOpenGraph('og:description', description);
 }
 
-function showInviteMissing() {
+function showLinkMissing() {
   if (inviteMessage) {
-    inviteMessage.dataset.i18n = 'invite.missingMessage';
+    inviteMessage.dataset.i18n = `${page}.missingMessage`;
   }
   openInviteLinks.forEach((link) => {
     link.href = '/';
-    link.dataset.i18n = 'invite.missingButton';
+    link.dataset.i18n = `${page}.missingButton`;
   });
 }
 
-function configureInviteLink() {
+function configureOpenLink() {
   if (linkKind === 'invite' && payload) {
     const appLink = `peerlink://invite?payload=${encodeURIComponent(payload)}`;
     if (inviteCard) {
@@ -445,8 +505,8 @@ function configureInviteLink() {
     return;
   }
 
-  if (page === 'invite' || page === 'fallback') {
-    showInviteMissing();
+  if (page === 'invite' || page === 'pair' || page === 'fallback') {
+    showLinkMissing();
     return;
   }
 
@@ -461,5 +521,5 @@ document.querySelectorAll('[data-lang]').forEach((button) => {
   });
 });
 
-configureInviteLink();
+configureOpenLink();
 applyLanguage(preferredLanguage());
