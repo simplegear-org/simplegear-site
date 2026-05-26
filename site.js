@@ -8,9 +8,13 @@ const inviteCard = document.getElementById('invite-card');
 const trustCard = document.getElementById('trust-card');
 const inviteMessage = document.getElementById('invite-message');
 const page = document.body.dataset.page || 'home';
-const linkKind =
-  document.body.dataset.linkKind ||
-  (window.location.pathname.includes('/pair') ? 'pair' : 'invite');
+const linkKind = document.body.dataset.linkKind || detectLinkKind(window.location.pathname);
+const pagesWithPayloadState = new Set(['invite', 'pair', 'config', 'fallback']);
+const payloadTypeToHost = Object.freeze({
+  peerlink_account_pairing: 'pair',
+  peerlink_invite: 'invite',
+  peerlink_server_config: 'config',
+});
 
 const strings = {
   en: {
@@ -69,6 +73,18 @@ const strings = {
       detectedTitle: 'Pairing link detected',
       openingMessage: 'Opening PeerLink. If nothing happens, tap the button.',
       missingMessage: 'No pairing payload was found in this link.',
+      missingButton: 'Go to PeerLink',
+      sourceBody: 'The app and server repositories are public so the communication stack can be inspected.',
+    },
+    config: {
+      metaTitle: 'PeerLink Server Configuration',
+      metaDescription: 'Open a PeerLink server configuration link or learn about the open-source PeerLink messenger.',
+      heroEyebrow: 'PeerLink server configuration',
+      title: 'Open PeerLink',
+      lead: 'This page opens a PeerLink server configuration link and also explains what the messenger does.',
+      detectedTitle: 'Configuration link detected',
+      openingMessage: 'Opening PeerLink. If nothing happens, tap the button.',
+      missingMessage: 'No server configuration payload was found in this link.',
       missingButton: 'Go to PeerLink',
       sourceBody: 'The app and server repositories are public so the communication stack can be inspected.',
     },
@@ -142,6 +158,18 @@ const strings = {
       missingButton: 'Перейти к PeerLink',
       sourceBody: 'Репозитории приложения и серверов открыты, чтобы коммуникационный стек можно было проверить.',
     },
+    config: {
+      metaTitle: 'Конфигурация серверов PeerLink',
+      metaDescription: 'Откройте ссылку конфигурации серверов PeerLink или узнайте больше об open-source приватном мессенджере.',
+      heroEyebrow: 'Конфигурация серверов PeerLink',
+      title: 'Открыть PeerLink',
+      lead: 'Эта страница открывает ссылку конфигурации серверов PeerLink и объясняет, что умеет мессенджер.',
+      detectedTitle: 'Ссылка конфигурации найдена',
+      openingMessage: 'Открываем PeerLink. Если ничего не произошло, нажмите кнопку.',
+      missingMessage: 'В этой ссылке не найден payload конфигурации серверов.',
+      missingButton: 'Перейти к PeerLink',
+      sourceBody: 'Репозитории приложения и серверов открыты, чтобы коммуникационный стек можно было проверить.',
+    },
     fallback: {
       metaTitle: 'PeerLink',
       metaDescription: 'Откройте приглашение PeerLink или вернитесь на главную страницу PeerLink.',
@@ -209,6 +237,18 @@ const strings = {
       detectedTitle: 'Enlace de vinculación detectado',
       openingMessage: 'Abriendo PeerLink. Si no sucede nada, toca el botón.',
       missingMessage: 'No se encontró payload de vinculación en este enlace.',
+      missingButton: 'Ir a PeerLink',
+      sourceBody: 'Los repositorios de la app y los servidores son públicos para poder revisar la pila de comunicación.',
+    },
+    config: {
+      metaTitle: 'Configuración de servidores PeerLink',
+      metaDescription: 'Abre un enlace de configuración de servidores de PeerLink o conoce el mensajero privado de código abierto.',
+      heroEyebrow: 'Configuración de servidores PeerLink',
+      title: 'Abrir PeerLink',
+      lead: 'Esta página abre un enlace de configuración de servidores de PeerLink y también explica qué hace el mensajero.',
+      detectedTitle: 'Enlace de configuración detectado',
+      openingMessage: 'Abriendo PeerLink. Si no sucede nada, toca el botón.',
+      missingMessage: 'No se encontró payload de configuración de servidores en este enlace.',
       missingButton: 'Ir a PeerLink',
       sourceBody: 'Los repositorios de la app y los servidores son públicos para poder revisar la pila de comunicación.',
     },
@@ -282,6 +322,18 @@ const strings = {
       missingButton: '前往 PeerLink',
       sourceBody: '应用和服务器仓库都是公开的，因此可以检查整个通信栈。',
     },
+    config: {
+      metaTitle: 'PeerLink 服务器配置',
+      metaDescription: '打开 PeerLink 服务器配置链接，或了解这款开源隐私通讯应用。',
+      heroEyebrow: 'PeerLink 服务器配置',
+      title: '打开 PeerLink',
+      lead: '此页面会打开 PeerLink 服务器配置链接，并说明这款通讯应用的用途。',
+      detectedTitle: '检测到配置链接',
+      openingMessage: '正在打开 PeerLink。如果没有反应，请点击按钮。',
+      missingMessage: '此链接中没有找到服务器配置 payload。',
+      missingButton: '前往 PeerLink',
+      sourceBody: '应用和服务器仓库都是公开的，因此可以检查整个通信栈。',
+    },
     fallback: {
       metaTitle: 'PeerLink',
       metaDescription: '打开 PeerLink 邀请或返回 PeerLink 主页。',
@@ -349,6 +401,18 @@ const strings = {
       detectedTitle: 'Lien d’association détecté',
       openingMessage: 'Ouverture de PeerLink. Si rien ne se passe, touchez le bouton.',
       missingMessage: 'Aucun payload d’association n’a été trouvé dans ce lien.',
+      missingButton: 'Aller à PeerLink',
+      sourceBody: 'Les dépôts de l’app et des serveurs sont publics afin que la pile de communication puisse être inspectée.',
+    },
+    config: {
+      metaTitle: 'Configuration des serveurs PeerLink',
+      metaDescription: 'Ouvrez un lien de configuration des serveurs PeerLink ou découvrez la messagerie privée open source.',
+      heroEyebrow: 'Configuration des serveurs PeerLink',
+      title: 'Ouvrir PeerLink',
+      lead: 'Cette page ouvre un lien de configuration des serveurs PeerLink et explique aussi ce que fait la messagerie.',
+      detectedTitle: 'Lien de configuration détecté',
+      openingMessage: 'Ouverture de PeerLink. Si rien ne se passe, touchez le bouton.',
+      missingMessage: 'Aucun payload de configuration des serveurs n’a été trouvé dans ce lien.',
       missingButton: 'Aller à PeerLink',
       sourceBody: 'Les dépôts de l’app et des serveurs sont publics afin que la pile de communication puisse être inspectée.',
     },
@@ -442,6 +506,7 @@ function applyLanguage(language) {
     node.textContent = activeLanguage.toUpperCase();
   });
 
+
   document.querySelectorAll('[data-lang]').forEach((button) => {
     const isActive = button.dataset.lang === activeLanguage;
     button.classList.toggle('active', isActive);
@@ -469,43 +534,13 @@ function showLinkMissing() {
 }
 
 function configureOpenLink() {
-  if (linkKind === 'invite' && payload) {
-    const appLink = `peerlink://invite?payload=${encodeURIComponent(payload)}`;
-    if (inviteCard) {
-      inviteCard.hidden = false;
-    }
-    if (trustCard) {
-      trustCard.hidden = true;
-    }
-    openInviteLinks.forEach((link) => {
-      link.href = appLink;
-    });
-    window.setTimeout(() => {
-      window.location.href = appLink;
-    }, 350);
+  const appLink = resolveOpenLink();
+  if (appLink) {
+    showResolvedLink(appLink);
     return;
   }
 
-  if (linkKind === 'pair' && (pairingData || payload)) {
-    const appLink = pairingData
-      ? `peerlink://pair?data=${encodeURIComponent(pairingData)}`
-      : `peerlink://pair?payload=${encodeURIComponent(payload)}`;
-    if (inviteCard) {
-      inviteCard.hidden = false;
-    }
-    if (trustCard) {
-      trustCard.hidden = true;
-    }
-    openInviteLinks.forEach((link) => {
-      link.href = appLink;
-    });
-    window.setTimeout(() => {
-      window.location.href = appLink;
-    }, 350);
-    return;
-  }
-
-  if (page === 'invite' || page === 'pair' || page === 'fallback') {
+  if (pagesWithPayloadState.has(page)) {
     showLinkMissing();
     return;
   }
@@ -513,6 +548,62 @@ function configureOpenLink() {
   openInviteLinks.forEach((link) => {
     link.hidden = true;
   });
+}
+
+function showResolvedLink(appLink) {
+  if (inviteCard) {
+    inviteCard.hidden = false;
+  }
+  if (trustCard) {
+    trustCard.hidden = true;
+  }
+  openInviteLinks.forEach((link) => {
+    link.href = appLink;
+  });
+  window.setTimeout(() => {
+    window.location.href = appLink;
+  }, 350);
+}
+
+function resolveOpenLink() {
+  if (linkKind === 'pair' && pairingData) {
+    return `peerlink://pair?data=${encodeURIComponent(pairingData)}`;
+  }
+  if (!payload) {
+    return null;
+  }
+  if (linkKind === 'pair') {
+    return `peerlink://pair?payload=${encodeURIComponent(payload)}`;
+  }
+  return buildAppLinkFromPayload(payload);
+}
+
+function buildAppLinkFromPayload(rawPayload) {
+  const encodedPayload = encodeURIComponent(rawPayload);
+  const payloadType = extractPayloadType(rawPayload);
+  const targetHost = payloadTypeToHost[payloadType] ?? 'invite';
+  return `peerlink://${targetHost}?payload=${encodedPayload}`;
+}
+
+function extractPayloadType(rawPayload) {
+  try {
+    const normalized = rawPayload.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
+    const parsed = JSON.parse(atob(padded));
+    return typeof parsed?.type === 'string' ? parsed.type : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function detectLinkKind(pathname) {
+  if (pathname.includes('/pair')) {
+    return 'pair';
+  }
+  if (pathname.includes('/config')) {
+    return 'config';
+  }
+  return 'invite';
 }
 
 document.querySelectorAll('[data-lang]').forEach((button) => {
