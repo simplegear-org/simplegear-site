@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="PeerLink is an open-source messenger for private chats, calls, media, and self-hosted communication infrastructure.">
+  <meta name="description" content="PeerLink X is an open-source messenger for private chats, calls, media, and self-hosted communication infrastructure.">
   <meta name="theme-color" content="#060D1A">
-  <meta property="og:title" content="PeerLink Messenger">
+  <meta property="og:title" content="PeerLink X Messenger">
   <meta property="og:description" content="Open-source private messenger with chats, calls, media, and self-hosted relay/bootstrap/TURN servers.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://simplegear.org">
@@ -14,14 +14,14 @@
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/site.css?v=20260729-1">
-  <title>PeerLink Messenger</title>
+  <title>PeerLink X Messenger</title>
 </head>
 <body data-page="home">
   <main class="shell">
     <header class="site-bar">
-      <a class="brand" href="/" aria-label="PeerLink">
+      <a class="brand" href="/" aria-label="PeerLink X">
         <img src="/icons/Icon-192.png" alt="" width="42" height="42">
-        <span>PeerLink</span>
+        <span>PeerLink X</span>
       </a>
       <nav class="language-switcher" data-i18n-attr="aria-label:common.languageAria" aria-label="Language">
         <button type="button" data-lang="en">EN</button>
@@ -35,7 +35,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow" data-i18n="home.heroEyebrow">Open-source secure messenger</p>
-        <h1>PeerLink</h1>
+        <h1>PeerLink X</h1>
         <p class="lead" data-i18n="home.lead">
           Private direct and group messaging, calls, media sharing, and self-hosted communication servers.
         </p>
@@ -44,25 +44,26 @@
           <a class="button ghost" href="#source" data-i18n="common.sourceCode">Source code</a>
         </div>
       </div>
-      <div class="hero-card" id="invite-card" hidden>
-        <span class="status-dot"></span>
-        <h2 data-i18n="invite.detectedTitle">Invite detected</h2>
-        <p id="invite-message" data-i18n="invite.openingMessage">Opening PeerLink. If nothing happens, tap the button below.</p>
-        <a class="button primary" id="open-invite-link" href="#" data-i18n="common.openPeerLink">Open PeerLink</a>
+      <div class="hero-card qr-card" id="trust-card">
+        <p class="eyebrow" data-i18n="home.initialConfigEyebrow">Primary setup</p>
+        <img src="/initial-server-config-qr.svg" alt="PeerLink X primary server configuration QR code" data-i18n-attr="alt:home.initialConfigQrAlt">
+        <h2 data-i18n="home.initialConfigTitle">Server configuration</h2>
+        <p data-i18n="home.initialConfigBody">Scan this QR code in PeerLink X to import the primary bootstrap, relay, TURN, and push servers.</p>
+        <a class="button primary" href="/config?payload=eyJ0eXBlIjoicGVlcmxpbmtfc2VydmVyX2NvbmZpZyIsInZlcnNpb24iOjEsImJvb3RzdHJhcCI6WyJ3c3M6Ly9wZWVybGluay5jbHViIiwid3NzOi8vMTc2LjEwOS4xMDAuMjAzOjQ0MyIsIndzczovLzE3OC4xMDQuNzguNTEiXSwicmVsYXkiOlsiaHR0cHM6Ly9wZWVybGluay5jbHViOjQ0NCIsImh0dHBzOi8vMTc2LjEwOS4xMDAuMjAzOjQ0NCIsImh0dHBzOi8vMTc4LjEwNC43OC41MTo0NDQiXSwidHVybiI6W3sidXJsIjoidHVybjpwZWVybGluay5jbHViOjM0Nzg_dHJhbnNwb3J0PXVkcCIsInVzZXJuYW1lIjoicGVlcmxpbmsiLCJwYXNzd29yZCI6InBlZXJsaW5rIiwicHJpb3JpdHkiOjB9LHsidXJsIjoidHVybjpwZWVybGluay5jbHViOjM0Nzg_dHJhbnNwb3J0PXRjcCIsInVzZXJuYW1lIjoicGVlcmxpbmsiLCJwYXNzd29yZCI6InBlZXJsaW5rIiwicHJpb3JpdHkiOjB9LHsidXJsIjoidHVybjoxNzYuMTA5LjEwMC4yMDM6MzQ3OD90cmFuc3BvcnQ9dWRwIiwidXNlcm5hbWUiOiJwZWVybGluayIsInBhc3N3b3JkIjoiTDltckF0VnZaQXhVeWpEUXh3YjYiLCJwcmlvcml0eSI6MTAwMH0seyJ1cmwiOiJ0dXJuOjE3Ni4xMDkuMTAwLjIwMzozNDc4P3RyYW5zcG9ydD10Y3AiLCJ1c2VybmFtZSI6InBlZXJsaW5rIiwicGFzc3dvcmQiOiJMOW1yQXRWdlpBeFV5akRReHdiNiIsInByaW9yaXR5Ijo3NTB9LHsidXJsIjoidHVybjoxNzguMTA0Ljc4LjUxOjM0Nzg_dHJhbnNwb3J0PXVkcCIsInVzZXJuYW1lIjoicGVlcmxpbmsiLCJwYXNzd29yZCI6InBlZXJsaW5rIiwicHJpb3JpdHkiOjEwMH0seyJ1cmwiOiJ0dXJuOjE3OC4xMDQuNzguNTE6MzQ3OD90cmFuc3BvcnQ9dGNwIiwidXNlcm5hbWUiOiJwZWVybGluayIsInBhc3N3b3JkIjoicGVlcmxpbmsiLCJwcmlvcml0eSI6OTB9XSwicHVzaCI6WyJodHRwczovL3BlZXJsaW5rLmNsdWI6NDQ1IiwiaHR0cHM6Ly90YW5nYXNoLm9yZyJdfQ" data-i18n="home.initialConfigButton">Open configuration</a>
       </div>
-      <div class="hero-card" id="trust-card">
-        <span class="status-dot"></span>
-        <h2 data-i18n="home.trustTitle">Nothing hidden</h2>
-        <p data-i18n="home.trustBody">
-          PeerLink keeps the app and server code public so anyone can inspect how communication works.
-        </p>
-      </div>
+    </section>
+
+    <section class="hero-card payload-card" id="invite-card" hidden>
+      <span class="status-dot"></span>
+      <h2 data-i18n="invite.detectedTitle">Invite detected</h2>
+      <p id="invite-message" data-i18n="invite.openingMessage">Opening PeerLink X. If nothing happens, tap the button below.</p>
+      <a class="button primary" id="open-invite-link" href="#" data-i18n="common.openPeerLink">Open PeerLink X</a>
     </section>
 
     <section class="grid" aria-label="Features">
       <article>
         <h2 data-i18n="home.privateTitle">Private by design</h2>
-        <p data-i18n="home.privateBody">PeerLink focuses on peer identity, encrypted messaging, calls, and media without hiding the implementation.</p>
+        <p data-i18n="home.privateBody">PeerLink X focuses on peer identity, encrypted messaging, calls, and media without hiding the implementation.</p>
       </article>
       <article>
         <h2 data-i18n="home.selfHostTitle">Self-host friendly</h2>
@@ -74,11 +75,11 @@
       </article>
     </section>
 
-    <section class="languages" aria-label="PeerLink description">
-      <h2 data-i18n="home.aboutTitle">About PeerLink</h2>
+    <section class="languages" aria-label="PeerLink X description">
+      <h2 data-i18n="home.aboutTitle">About PeerLink X</h2>
       <div class="language-panel">
         <span data-current-lang>EN</span>
-        <p data-i18n="home.aboutBody">PeerLink is a private open-source messenger for direct chats, group chats, calls, media, and self-hosted network servers.</p>
+        <p data-i18n="home.aboutBody">PeerLink X is a private open-source messenger for direct chats, group chats, calls, media, and self-hosted network servers.</p>
       </div>
     </section>
 
@@ -91,8 +92,8 @@
         </p>
       </div>
       <div class="link-stack">
-        <a href="https://github.com/simplegear-org/peerlink" rel="noopener" data-i18n="common.appRepository">PeerLink app repository</a>
-        <a href="https://github.com/simplegear-org/peerlink_servers" rel="noopener" data-i18n="common.serverRepository">PeerLink servers repository</a>
+        <a href="https://github.com/simplegear-org/peerlink" rel="noopener" data-i18n="common.appRepository">PeerLink X app repository</a>
+        <a href="https://github.com/simplegear-org/peerlink_servers" rel="noopener" data-i18n="common.serverRepository">PeerLink X servers repository</a>
         <a href="/privacy" data-i18n="common.privacyPolicy">Privacy Policy</a>
       </div>
     </section>

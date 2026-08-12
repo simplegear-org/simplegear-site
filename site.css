@@ -210,6 +210,39 @@ h2 {
   padding: 30px;
 }
 
+.qr-card {
+  align-content: center;
+  gap: 16px;
+  justify-items: center;
+  text-align: center;
+}
+
+.qr-card .eyebrow {
+  margin-bottom: 0;
+}
+
+.qr-card img {
+  background: #ffffff;
+  border-radius: 18px;
+  display: block;
+  height: auto;
+  max-width: min(100%, 278px);
+  padding: 12px;
+  width: 278px;
+}
+
+.qr-card h2 {
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+
+.qr-card p {
+  margin: 0;
+}
+
+.payload-card {
+  margin-top: 20px;
+}
+
 .hero-card p,
 .grid p,
 .languages p,
@@ -367,5 +400,10 @@ h2 {
 
   .status-dot {
     margin-bottom: 48px;
+  }
+
+  .qr-card img {
+    max-width: min(100%, 240px);
+    width: 240px;
   }
 }
