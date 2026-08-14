@@ -50,7 +50,6 @@
     }
   ],
   "push": [
-    "https://peerlink.club:445",
     "https://tangash.org"
   ]
 }
