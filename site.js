@@ -4,11 +4,14 @@ const searchParams = new URLSearchParams(window.location.search);
 const payload = searchParams.get('payload');
 const pairingData = searchParams.get('data');
 const openInviteLinks = Array.from(document.querySelectorAll('#open-invite-link'));
+const initialConfigLinks = Array.from(document.querySelectorAll('[data-initial-config-link]'));
 const inviteCard = document.getElementById('invite-card');
 const inviteMessage = document.getElementById('invite-message');
 const page = document.body.dataset.page || 'home';
 const linkKind = document.body.dataset.linkKind || detectLinkKind(window.location.pathname);
 const pagesWithPayloadState = new Set(['invite', 'pair', 'config', 'fallback']);
+const maxPayloadLength = 65536;
+const maxPairDataLength = 65536;
 const payloadTypeToHost = Object.freeze({
   peerlink_account_pairing: 'pair',
   peerlink_invite: 'invite',
@@ -65,6 +68,7 @@ const strings = {
       lead: 'This page opens a PeerLink X invite and also explains what the messenger does.',
       detectedTitle: 'Invite detected',
       openingMessage: 'Opening PeerLink X. If nothing happens, tap the button.',
+      invalidMessage: 'This invite link is invalid or too large.',
       missingMessage: 'No invite payload was found in this link.',
       missingButton: 'Go to PeerLink X',
       sourceBody: 'The app and server repositories are public so the communication stack can be inspected.',
@@ -77,6 +81,7 @@ const strings = {
       lead: 'This page opens a PeerLink X device pairing link and also explains what the messenger does.',
       detectedTitle: 'Pairing link detected',
       openingMessage: 'Opening PeerLink X. If nothing happens, tap the button.',
+      invalidMessage: 'This pairing link is invalid or too large.',
       missingMessage: 'No pairing payload was found in this link.',
       missingButton: 'Go to PeerLink X',
       sourceBody: 'The app and server repositories are public so the communication stack can be inspected.',
@@ -89,6 +94,7 @@ const strings = {
       lead: 'This page opens a PeerLink X server configuration link and also explains what the messenger does.',
       detectedTitle: 'Configuration link detected',
       openingMessage: 'Opening PeerLink X. If nothing happens, tap the button.',
+      invalidMessage: 'This server configuration link is invalid or too large.',
       missingMessage: 'No server configuration payload was found in this link.',
       missingButton: 'Go to PeerLink X',
       sourceBody: 'The app and server repositories are public so the communication stack can be inspected.',
@@ -111,19 +117,19 @@ const strings = {
       effectiveDate: 'Effective date: July 29, 2026',
       intro: 'PeerLink X is an open-source messenger for private chats, calls, media, and self-hosted communication infrastructure. This policy explains what data may be processed and how server configuration information is shared.',
       back: 'Back to PeerLink X',
-      dataTitle: 'Data We Process',
+      dataTitle: 'Data processed',
       dataIdentity: 'Peer identity, account/device identifiers, display names, contacts, and settings stored by the app.',
       dataMessages: 'Chat messages, media metadata, call state, and delivery state needed to provide messaging and calls.',
       dataServers: 'Server configuration such as bootstrap, relay, TURN, and push endpoints that you add, receive, or use.',
       dataTechnical: 'Technical data needed for operation, diagnostics, abuse prevention, and reliability, such as network requests, IP addresses visible to servers, logs, errors, and device/runtime metadata.',
-      useTitle: 'How We Use Data',
+      useTitle: 'How data is used',
       useMessaging: 'To deliver direct and group messages, calls, media transfers, notifications, and account/device features.',
       useReliability: 'To keep communication reliable across network changes, unavailable peers, and relay-assisted delivery.',
       useSafety: 'To diagnose errors, maintain security, prevent abuse, and improve the app and server stack.',
       serverSharingTitle: 'Server Configuration Sharing',
       serverSharingBody: 'To expand the network and improve fault tolerance, information about configuration servers may be transmitted to other users during communication. This can include bootstrap, relay, TURN, and push server endpoints needed to connect, recover delivery, or keep chats and calls working.',
       sharingTitle: 'Data Sharing',
-      sharingBody: 'We do not sell personal data. Data may be processed by self-hosted servers you choose, by PeerLink X infrastructure endpoints configured in the app, and by service providers used to operate hosting, delivery, diagnostics, or security.',
+      sharingBody: 'PeerLink X project-operated infrastructure does not sell personal data. Data may be processed by self-hosted servers you choose, by PeerLink X infrastructure endpoints configured in the app, and by service providers used to operate hosting, delivery, diagnostics, or security.',
       retentionTitle: 'Data Retention',
       retentionBody: 'Local app data remains on your device until you delete it or reset the app. Server-side data is kept only as long as needed for delivery, operations, security, troubleshooting, or the service features you use.',
       choicesTitle: 'Your Choices',
@@ -181,6 +187,7 @@ const strings = {
       lead: 'Эта страница открывает приглашение PeerLink X и объясняет, что умеет мессенджер.',
       detectedTitle: 'Приглашение найдено',
       openingMessage: 'Открываем PeerLink X. Если ничего не произошло, нажмите кнопку.',
+      invalidMessage: 'Ссылка приглашения некорректна или слишком большая.',
       missingMessage: 'В этой ссылке не найден payload приглашения.',
       missingButton: 'Перейти к PeerLink X',
       sourceBody: 'Репозитории приложения и серверов открыты, чтобы коммуникационный стек можно было проверить.',
@@ -193,6 +200,7 @@ const strings = {
       lead: 'Эта страница открывает ссылку привязки PeerLink X и объясняет, что умеет мессенджер.',
       detectedTitle: 'Ссылка привязки найдена',
       openingMessage: 'Открываем PeerLink X. Если ничего не произошло, нажмите кнопку.',
+      invalidMessage: 'Ссылка привязки некорректна или слишком большая.',
       missingMessage: 'В этой ссылке не найден payload привязки.',
       missingButton: 'Перейти к PeerLink X',
       sourceBody: 'Репозитории приложения и серверов открыты, чтобы коммуникационный стек можно было проверить.',
@@ -205,6 +213,7 @@ const strings = {
       lead: 'Эта страница открывает ссылку конфигурации серверов PeerLink X и объясняет, что умеет мессенджер.',
       detectedTitle: 'Ссылка конфигурации найдена',
       openingMessage: 'Открываем PeerLink X. Если ничего не произошло, нажмите кнопку.',
+      invalidMessage: 'Ссылка конфигурации серверов некорректна или слишком большая.',
       missingMessage: 'В этой ссылке не найден payload конфигурации серверов.',
       missingButton: 'Перейти к PeerLink X',
       sourceBody: 'Репозитории приложения и серверов открыты, чтобы коммуникационный стек можно было проверить.',
@@ -227,19 +236,19 @@ const strings = {
       effectiveDate: 'Дата вступления в силу: 29 июля 2026',
       intro: 'PeerLink X — мессенджер с открытым исходным кодом для приватных чатов, звонков, медиа и собственной коммуникационной инфраструктуры. Эта политика объясняет, какие данные могут обрабатываться и как передается информация о конфигурации серверов.',
       back: 'Назад к PeerLink X',
-      dataTitle: 'Какие данные мы обрабатываем',
+      dataTitle: 'Какие данные обрабатываются',
       dataIdentity: 'Peer-идентичность, идентификаторы аккаунта и устройств, отображаемые имена, контакты и настройки, сохраненные приложением.',
       dataMessages: 'Сообщения чатов, метаданные медиа, состояние звонков и состояние доставки, необходимые для сообщений и звонков.',
       dataServers: 'Конфигурация серверов: bootstrap, relay, TURN и push endpoint-ы, которые вы добавляете, получаете или используете.',
       dataTechnical: 'Технические данные для работы, диагностики, предотвращения злоупотреблений и надежности: сетевые запросы, IP-адреса, видимые серверам, логи, ошибки и device/runtime metadata.',
-      useTitle: 'Как мы используем данные',
+      useTitle: 'Как используются данные',
       useMessaging: 'Для доставки личных и групповых сообщений, звонков, медиа, уведомлений и функций аккаунта/устройств.',
       useReliability: 'Чтобы связь оставалась устойчивой при смене сети, недоступности пиров и relay-доставке.',
       useSafety: 'Для диагностики ошибок, поддержки безопасности, предотвращения злоупотреблений и улучшения приложения и серверного стека.',
       serverSharingTitle: 'Передача конфигурации серверов',
       serverSharingBody: 'Для расширения сети и повышения отказоустойчивости информация о серверах конфигурации может передаваться другим пользователям во время общения. Это может включать bootstrap, relay, TURN и push endpoint-ы, необходимые для подключения, восстановления доставки и работы чатов и звонков.',
       sharingTitle: 'Передача данных',
-      sharingBody: 'Мы не продаем персональные данные. Данные могут обрабатываться выбранными вами self-hosted серверами, инфраструктурными endpoint-ами PeerLink X, настроенными в приложении, и поставщиками сервисов для хостинга, доставки, диагностики или безопасности.',
+      sharingBody: 'Проектная инфраструктура PeerLink X не продает персональные данные. Данные могут обрабатываться выбранными вами self-hosted серверами, инфраструктурными endpoint-ами PeerLink X, настроенными в приложении, и поставщиками сервисов для хостинга, доставки, диагностики или безопасности.',
       retentionTitle: 'Срок хранения',
       retentionBody: 'Локальные данные приложения остаются на устройстве, пока вы не удалите их или не сбросите приложение. Серверные данные хранятся только столько, сколько нужно для доставки, работы сервиса, безопасности, диагностики или используемых функций.',
       choicesTitle: 'Ваш выбор',
@@ -297,6 +306,7 @@ const strings = {
       lead: 'Esta página abre una invitación de PeerLink X y también explica qué hace el mensajero.',
       detectedTitle: 'Invitación detectada',
       openingMessage: 'Abriendo PeerLink X. Si no sucede nada, toca el botón.',
+      invalidMessage: 'Este enlace de invitación no es válido o es demasiado grande.',
       missingMessage: 'No se encontró payload de invitación en este enlace.',
       missingButton: 'Ir a PeerLink X',
       sourceBody: 'Los repositorios de la app y los servidores son públicos para poder revisar la pila de comunicación.',
@@ -309,6 +319,7 @@ const strings = {
       lead: 'Esta página abre un enlace de vinculación de PeerLink X y también explica qué hace el mensajero.',
       detectedTitle: 'Enlace de vinculación detectado',
       openingMessage: 'Abriendo PeerLink X. Si no sucede nada, toca el botón.',
+      invalidMessage: 'Este enlace de vinculación no es válido o es demasiado grande.',
       missingMessage: 'No se encontró payload de vinculación en este enlace.',
       missingButton: 'Ir a PeerLink X',
       sourceBody: 'Los repositorios de la app y los servidores son públicos para poder revisar la pila de comunicación.',
@@ -321,6 +332,7 @@ const strings = {
       lead: 'Esta página abre un enlace de configuración de servidores de PeerLink X y también explica qué hace el mensajero.',
       detectedTitle: 'Enlace de configuración detectado',
       openingMessage: 'Abriendo PeerLink X. Si no sucede nada, toca el botón.',
+      invalidMessage: 'Este enlace de configuración de servidores no es válido o es demasiado grande.',
       missingMessage: 'No se encontró payload de configuración de servidores en este enlace.',
       missingButton: 'Ir a PeerLink X',
       sourceBody: 'Los repositorios de la app y los servidores son públicos para poder revisar la pila de comunicación.',
@@ -413,6 +425,7 @@ const strings = {
       lead: '此页面会打开 PeerLink X 邀请，并说明这款通讯应用的用途。',
       detectedTitle: '检测到邀请',
       openingMessage: '正在打开 PeerLink X。如果没有反应，请点击按钮。',
+      invalidMessage: '此邀请链接无效或过大。',
       missingMessage: '此链接中没有找到邀请 payload。',
       missingButton: '前往 PeerLink X',
       sourceBody: '应用和服务器仓库都是公开的，因此可以检查整个通信栈。',
@@ -425,6 +438,7 @@ const strings = {
       lead: '此页面会打开 PeerLink X 设备绑定链接，并说明这款通讯应用的用途。',
       detectedTitle: '检测到绑定链接',
       openingMessage: '正在打开 PeerLink X。如果没有反应，请点击按钮。',
+      invalidMessage: '此绑定链接无效或过大。',
       missingMessage: '此链接中没有找到绑定 payload。',
       missingButton: '前往 PeerLink X',
       sourceBody: '应用和服务器仓库都是公开的，因此可以检查整个通信栈。',
@@ -437,6 +451,7 @@ const strings = {
       lead: '此页面会打开 PeerLink X 服务器配置链接，并说明这款通讯应用的用途。',
       detectedTitle: '检测到配置链接',
       openingMessage: '正在打开 PeerLink X。如果没有反应，请点击按钮。',
+      invalidMessage: '此服务器配置链接无效或过大。',
       missingMessage: '此链接中没有找到服务器配置 payload。',
       missingButton: '前往 PeerLink X',
       sourceBody: '应用和服务器仓库都是公开的，因此可以检查整个通信栈。',
@@ -459,19 +474,19 @@ const strings = {
       effectiveDate: '生效日期：2026 年 7 月 29 日',
       intro: 'PeerLink X 是一款开源通讯应用，支持私密聊天、通话、媒体分享和自托管通信基础设施。本政策说明可能处理哪些数据，以及服务器配置信息如何共享。',
       back: '返回 PeerLink X',
-      dataTitle: '我们处理的数据',
+      dataTitle: '被处理的数据',
       dataIdentity: '应用存储的 peer 身份、账号/设备标识符、显示名称、联系人和设置。',
       dataMessages: '为提供消息和通话所需的聊天消息、媒体元数据、通话状态和投递状态。',
       dataServers: '你添加、接收或使用的服务器配置，例如 bootstrap、relay、TURN 和 push endpoint。',
       dataTechnical: '运行、诊断、防滥用和可靠性所需的技术数据，例如网络请求、服务器可见的 IP 地址、日志、错误以及设备/runtime 元数据。',
-      useTitle: '我们如何使用数据',
+      useTitle: '数据如何被使用',
       useMessaging: '用于投递私聊和群聊消息、通话、媒体传输、通知以及账号/设备功能。',
       useReliability: '用于在网络变化、peer 不可用和 relay 辅助投递场景下保持通信可靠。',
       useSafety: '用于诊断错误、维护安全、防止滥用并改进应用和服务器栈。',
       serverSharingTitle: '服务器配置共享',
       serverSharingBody: '为扩展网络并提升容错能力，配置服务器的信息可能会在通信过程中传输给其他用户。这可能包括连接、恢复投递或保持聊天和通话工作所需的 bootstrap、relay、TURN 和 push server endpoint。',
       sharingTitle: '数据共享',
-      sharingBody: '我们不出售个人数据。数据可能由你选择的自托管服务器、应用中配置的 PeerLink X 基础设施 endpoint，以及用于托管、投递、诊断或安全的服务提供商处理。',
+      sharingBody: 'PeerLink X 项目运营的基础设施不出售个人数据。数据可能由你选择的自托管服务器、应用中配置的 PeerLink X 基础设施 endpoint，以及用于托管、投递、诊断或安全的服务提供商处理。',
       retentionTitle: '数据保留',
       retentionBody: '本地应用数据会保留在你的设备上，直到你删除或重置应用。服务器端数据仅在投递、运营、安全、故障排查或你使用的服务功能所需期间保留。',
       choicesTitle: '你的选择',
@@ -529,6 +544,7 @@ const strings = {
       lead: 'Cette page ouvre une invitation PeerLink X et explique aussi ce que fait la messagerie.',
       detectedTitle: 'Invitation détectée',
       openingMessage: 'Ouverture de PeerLink X. Si rien ne se passe, touchez le bouton.',
+      invalidMessage: 'Ce lien d’invitation est invalide ou trop volumineux.',
       missingMessage: 'Aucun payload d’invitation n’a été trouvé dans ce lien.',
       missingButton: 'Aller à PeerLink X',
       sourceBody: 'Les dépôts de l’app et des serveurs sont publics afin que la pile de communication puisse être inspectée.',
@@ -541,6 +557,7 @@ const strings = {
       lead: 'Cette page ouvre un lien d’association PeerLink X et explique aussi ce que fait la messagerie.',
       detectedTitle: 'Lien d’association détecté',
       openingMessage: 'Ouverture de PeerLink X. Si rien ne se passe, touchez le bouton.',
+      invalidMessage: 'Ce lien d’association est invalide ou trop volumineux.',
       missingMessage: 'Aucun payload d’association n’a été trouvé dans ce lien.',
       missingButton: 'Aller à PeerLink X',
       sourceBody: 'Les dépôts de l’app et des serveurs sont publics afin que la pile de communication puisse être inspectée.',
@@ -553,6 +570,7 @@ const strings = {
       lead: 'Cette page ouvre un lien de configuration des serveurs PeerLink X et explique aussi ce que fait la messagerie.',
       detectedTitle: 'Lien de configuration détecté',
       openingMessage: 'Ouverture de PeerLink X. Si rien ne se passe, touchez le bouton.',
+      invalidMessage: 'Ce lien de configuration des serveurs est invalide ou trop volumineux.',
       missingMessage: 'Aucun payload de configuration des serveurs n’a été trouvé dans ce lien.',
       missingButton: 'Aller à PeerLink X',
       sourceBody: 'Les dépôts de l’app et des serveurs sont publics afin que la pile de communication puisse être inspectée.',
@@ -587,7 +605,7 @@ const strings = {
       serverSharingTitle: 'Partage de configuration des serveurs',
       serverSharingBody: 'Pour étendre le réseau et améliorer la tolérance aux pannes, les informations sur les serveurs de configuration peuvent être transmises à d’autres utilisateurs pendant la communication. Cela peut inclure les endpoints bootstrap, relay, TURN et push nécessaires pour se connecter, récupérer la livraison ou maintenir les chats et appels fonctionnels.',
       sharingTitle: 'Partage des données',
-      sharingBody: 'Nous ne vendons pas de données personnelles. Les données peuvent être traitées par les serveurs auto-hébergés que vous choisissez, par les endpoints d’infrastructure PeerLink X configurés dans l’app et par des fournisseurs utilisés pour l’hébergement, la livraison, le diagnostic ou la sécurité.',
+      sharingBody: 'L’infrastructure opérée par le projet PeerLink X ne vend pas de données personnelles. Les données peuvent être traitées par les serveurs auto-hébergés que vous choisissez, par les endpoints d’infrastructure PeerLink X configurés dans l’app et par des fournisseurs utilisés pour l’hébergement, la livraison, le diagnostic ou la sécurité.',
       retentionTitle: 'Conservation des données',
       retentionBody: 'Les données locales de l’app restent sur votre appareil jusqu’à leur suppression ou la réinitialisation de l’app. Les données côté serveur sont conservées uniquement le temps nécessaire à la livraison, aux opérations, à la sécurité, au dépannage ou aux fonctions utilisées.',
       choicesTitle: 'Vos choix',
@@ -702,8 +720,22 @@ function showLinkMissing() {
   });
 }
 
+function showLinkInvalid() {
+  if (inviteMessage) {
+    inviteMessage.dataset.i18n = `${page}.invalidMessage`;
+  }
+  openInviteLinks.forEach((link) => {
+    link.href = '/';
+    link.dataset.i18n = `${page}.missingButton`;
+  });
+}
+
 function configureOpenLink() {
   const appLink = resolveOpenLink();
+  if (appLink === false) {
+    showLinkInvalid();
+    return;
+  }
   if (appLink) {
     showResolvedLink(appLink);
     return;
@@ -733,10 +765,16 @@ function showResolvedLink(appLink) {
 
 function resolveOpenLink() {
   if (linkKind === 'pair' && pairingData) {
+    if (pairingData.length > maxPairDataLength) {
+      return false;
+    }
     return `peerlink://pair?data=${encodeURIComponent(pairingData)}`;
   }
   if (!payload) {
     return null;
+  }
+  if (payload.length > maxPayloadLength) {
+    return false;
   }
   if (linkKind === 'pair') {
     return `peerlink://pair?payload=${encodeURIComponent(payload)}`;
@@ -747,6 +785,15 @@ function resolveOpenLink() {
 function buildAppLinkFromPayload(rawPayload) {
   const encodedPayload = encodeURIComponent(rawPayload);
   const payloadType = extractPayloadType(rawPayload);
+  if (payloadType && !payloadTypeToHost[payloadType]) {
+    return false;
+  }
+  if (linkKind === 'config' && payloadType !== 'peerlink_server_config') {
+    return false;
+  }
+  if (linkKind === 'invite' && payloadType === 'peerlink_server_config') {
+    return false;
+  }
   const targetHost = payloadTypeToHost[payloadType] ?? 'invite';
   return `peerlink://${targetHost}?payload=${encodedPayload}`;
 }
@@ -772,11 +819,37 @@ function detectLinkKind(pathname) {
   return 'invite';
 }
 
+async function configureInitialConfigLinks() {
+  if (!initialConfigLinks.length) {
+    return;
+  }
+  try {
+    const response = await fetch('/config/initial-server-config.generated.json', {
+      cache: 'no-store',
+    });
+    if (!response.ok) {
+      throw new Error('initial config metadata unavailable');
+    }
+    const generated = await response.json();
+    if (typeof generated?.url !== 'string' || !generated.url.startsWith('https://simplegear.org/config?payload=')) {
+      throw new Error('initial config metadata malformed');
+    }
+    initialConfigLinks.forEach((link) => {
+      link.href = generated.url.replace('https://simplegear.org', '');
+    });
+  } catch (_) {
+    initialConfigLinks.forEach((link) => {
+      link.href = '/config/';
+    });
+  }
+}
+
 document.querySelectorAll('[data-lang]').forEach((button) => {
   button.addEventListener('click', () => {
     applyLanguage(button.dataset.lang);
   });
 });
 
+configureInitialConfigLinks();
 configureOpenLink();
 applyLanguage(preferredLanguage());

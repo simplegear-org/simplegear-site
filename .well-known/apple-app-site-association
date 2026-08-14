@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "36WZ459LJ7.org.simplegear.peerlinkapp",
+        "paths": [
+          "/invite*",
+          "/pair*",
+          "/config*"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "generate": "node scripts/generate-config-artifacts.mjs",
+    "validate": "node scripts/validate-site.mjs"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {}
+}

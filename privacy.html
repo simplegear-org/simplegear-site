@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'">
   <title>PeerLink X Privacy Policy</title>
-  <script>
-    window.location.replace('/privacy/' + window.location.search + window.location.hash);
-  </script>
 </head>
-<body>
+<body data-redirect-to="/privacy/">
   <p>Opening PeerLink X privacy policy...</p>
   <p><a href="/privacy/">Continue to privacy policy</a></p>
+  <script src="/redirect.js?v=20260814-1"></script>
 </body>
 </html>
