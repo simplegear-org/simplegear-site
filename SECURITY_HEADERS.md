@@ -13,11 +13,12 @@ ACTION REQUIRED:
 - Block force pushes and branch deletion on `main`.
 - Require the `Validate site` GitHub Actions check before merging to `main`.
 - Enable Private Vulnerability Reporting.
+- Defer HSTS until HTTPS is stable and verified across apex, `www`, and all
+  deep-link routes. Do not enable HSTS preload yet.
 
 Recommended production headers:
 
 ```text
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'
 X-Content-Type-Options: nosniff
 Referrer-Policy: no-referrer

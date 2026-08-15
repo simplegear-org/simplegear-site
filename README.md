@@ -47,7 +47,7 @@ matches the canonical JSON.
 
 ## Pull Request Validation
 
-GitHub Actions runs on pull requests and pushes to `main` and `dev`:
+GitHub Actions runs on pull requests and pushes to `main`:
 
 ```sh
 npm ci
@@ -59,29 +59,15 @@ npm run validate
 If `config/initial-server-config.json` changes but generated artifacts are not
 committed, the PR check fails.
 
-## Production Mirror
+## Public Website Repository
 
-This repository is the source repository for the website. Production GitHub
-Pages is mirrored to:
-
-https://github.com/simplegear-org/simplegear-site
-
-On push to `main`, GitHub Actions validates the site and publishes an
-append-only mirror commit to `simplegear-org/simplegear-site:main`.
-
-Required secret in this repository:
-
-```text
-MIRROR_REPO_TOKEN
-```
-
-The token must have permission to push to `simplegear-org/simplegear-site`.
+This repository contains public source used to serve the official SimpleGear
+website through GitHub Pages.
 
 Recommended repository flow:
 
-- create a `dev` branch;
-- open pull requests from feature branches into `dev`;
-- merge `dev` into `main` only after the `Validate site` check passes;
+- open pull requests into `main`;
+- merge only after the `Validate site` check passes;
 - protect `main` from direct pushes, force pushes, and deletion.
 
 ## Related Repositories
