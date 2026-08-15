@@ -22,6 +22,7 @@ try {
 const canonicalJson = JSON.stringify(config);
 const payload = Buffer.from(canonicalJson, 'utf8').toString('base64url');
 const url = `https://simplegear.org/config?payload=${payload}`;
+const assetVersion = payload.slice(0, 16);
 
 const generated = {
   source: 'config/initial-server-config.json',
@@ -51,7 +52,17 @@ fs.writeFileSync(
   `<!-- Generated from config/initial-server-config.json. Do not edit manually. -->\n${svg}\n`
 );
 
-console.log(`Generated ${path.relative(root, generatedPath)} and ${path.relative(root, qrPath)}`);
+for (const relativeHtmlPath of ['index.html', path.join('invite', 'index.html')]) {
+  const htmlPath = path.join(root, relativeHtmlPath);
+  const html = fs.readFileSync(htmlPath, 'utf8');
+  const updated = html.replace(
+    /src="\/initial-server-config-qr\.svg(?:\?v=[^"]*)?"/g,
+    `src="/initial-server-config-qr.svg?v=${assetVersion}"`
+  );
+  fs.writeFileSync(htmlPath, updated);
+}
+
+console.log(`Generated ${path.relative(root, generatedPath)}, ${path.relative(root, qrPath)}, and QR cache-bust links`);
 
 function escapeXmlAttribute(value) {
   return value

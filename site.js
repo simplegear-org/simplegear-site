@@ -835,24 +835,39 @@ async function configureInitialConfigLinks() {
     return;
   }
   try {
-    const response = await fetch('/config/initial-server-config.generated.json', {
+    const response = await fetch(`/config/initial-server-config.json?v=${Date.now()}`, {
       cache: 'no-store',
     });
     if (!response.ok) {
-      throw new Error('initial config metadata unavailable');
+      throw new Error('initial config unavailable');
     }
-    const generated = await response.json();
-    if (typeof generated?.url !== 'string' || !generated.url.startsWith('https://simplegear.org/config?payload=')) {
-      throw new Error('initial config metadata malformed');
-    }
+    const config = await response.json();
+    const url = buildServerConfigUrl(config);
     initialConfigLinks.forEach((link) => {
-      link.href = generated.url.replace('https://simplegear.org', '');
+      link.href = url.replace('https://simplegear.org', '');
     });
   } catch (_) {
     initialConfigLinks.forEach((link) => {
       link.href = '/config/';
     });
   }
+}
+
+function buildServerConfigUrl(config) {
+  if (config?.type !== 'peerlink_server_config') {
+    throw new Error('initial config malformed');
+  }
+  const payload = base64UrlEncode(JSON.stringify(config));
+  return `https://simplegear.org/config?payload=${payload}`;
+}
+
+function base64UrlEncode(value) {
+  const bytes = new TextEncoder().encode(value);
+  let binary = '';
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
 }
 
 document.querySelectorAll('[data-lang]').forEach((button) => {

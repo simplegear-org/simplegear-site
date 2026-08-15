@@ -23,7 +23,11 @@ Generated artifacts:
 
 - `config/initial-server-config.generated.json`
 - `initial-server-config-qr.svg`
-- homepage and invite-page configuration links at runtime
+- QR cache-bust links in `index.html` and `invite/index.html`
+
+Homepage and invite-page configuration buttons build their deep links at
+runtime from `config/initial-server-config.json`. Do not edit generated payloads
+or QR links manually.
 
 Run:
 
@@ -32,8 +36,8 @@ npm install
 npm run validate
 ```
 
-`npm run validate` regenerates derived configuration artifacts before checking
-the site. Use `npm run check` only when you need a non-mutating drift check.
+`npm run check`, `npm run validate`, and `npm run build` regenerate derived
+configuration artifacts before checking the site.
 
 After changing `config/initial-server-config.json`, run:
 
@@ -42,8 +46,8 @@ npm run validate
 ```
 
 This updates `config/initial-server-config.generated.json`,
-`initial-server-config-qr.svg`, and validates that the generated payload still
-matches the canonical JSON.
+`initial-server-config-qr.svg`, QR cache-bust links in HTML, and validates that
+the generated payload still matches the canonical JSON.
 
 ## Pull Request Validation
 
@@ -51,13 +55,16 @@ GitHub Actions runs on pull requests and pushes to `main`:
 
 ```sh
 npm ci
-npm run generate
+npm run check
 git diff --exit-code
-npm run validate
 ```
 
 If `config/initial-server-config.json` changes but generated artifacts are not
 committed, the PR check fails.
+
+For routine server-list updates, edit only
+`config/initial-server-config.json`, run `npm run check`, review `git diff`,
+and commit the canonical JSON plus the regenerated artifacts.
 
 ## Public Website Repository
 

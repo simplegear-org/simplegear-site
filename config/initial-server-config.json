@@ -27,13 +27,13 @@
     {
       "url": "turn:176.109.100.203:3478?transport=udp",
       "username": "peerlink",
-      "password": "L9mrAtVvZAxUyjDQxwb6",
+      "password": "peerlink",
       "priority": 1000
     },
     {
       "url": "turn:176.109.100.203:3478?transport=tcp",
       "username": "peerlink",
-      "password": "L9mrAtVvZAxUyjDQxwb6",
+      "password": "peerlink",
       "priority": 750
     },
     {

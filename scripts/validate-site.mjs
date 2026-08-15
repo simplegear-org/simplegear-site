@@ -110,6 +110,9 @@ requiredFiles.forEach((file) => {
 
 const config = readJson('config/initial-server-config.json');
 const generated = readJson('config/initial-server-config.generated.json');
+const configAssetVersion = typeof generated?.payload === 'string'
+  ? generated.payload.slice(0, 16)
+  : '';
 readJson('manifest.json');
 const assetlinks = readJson('.well-known/assetlinks.json');
 const aasa = readJson('.well-known/apple-app-site-association');
@@ -193,8 +196,16 @@ for (const file of htmlFiles) {
   const html = fs.readFileSync(path.join(root, file), 'utf8');
   if (!html.includes('<!DOCTYPE html>')) fail(`${file}: missing doctype`);
   if (html.includes('<script>')) fail(`${file}: inline script is not allowed`);
+  if (!html.includes('http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0"')) {
+    fail(`${file}: missing no-cache Cache-Control meta`);
+  }
+  if (!html.includes('http-equiv="Pragma" content="no-cache"')) fail(`${file}: missing no-cache Pragma meta`);
+  if (!html.includes('http-equiv="Expires" content="0"')) fail(`${file}: missing no-cache Expires meta`);
   if (html.includes('site.js?v=') && !html.includes(`site.js?v=${assetVersion}`)) fail(`${file}: stale site.js version`);
   if (html.includes('site.css?v=') && !html.includes(`site.css?v=${assetVersion}`)) fail(`${file}: stale site.css version`);
+  if (html.includes('initial-server-config-qr.svg') && !html.includes(`initial-server-config-qr.svg?v=${configAssetVersion}`)) {
+    fail(`${file}: stale initial server config QR version`);
+  }
   if (['invite/index.html', 'pair/index.html', 'config/index.html', 'invite.html', 'pair.html', 'config.html'].includes(file)) {
     if (!html.includes('content="noindex,nofollow"')) fail(`${file}: missing noindex,nofollow`);
     if (!html.includes('content="no-referrer"')) fail(`${file}: missing no-referrer`);
