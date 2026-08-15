@@ -29,9 +29,60 @@ Run:
 
 ```sh
 npm install
-npm run generate
 npm run validate
 ```
+
+`npm run validate` regenerates derived configuration artifacts before checking
+the site. Use `npm run check` only when you need a non-mutating drift check.
+
+After changing `config/initial-server-config.json`, run:
+
+```sh
+npm run validate
+```
+
+This updates `config/initial-server-config.generated.json`,
+`initial-server-config-qr.svg`, and validates that the generated payload still
+matches the canonical JSON.
+
+## Pull Request Validation
+
+GitHub Actions runs on pull requests and pushes to `main` and `dev`:
+
+```sh
+npm ci
+npm run generate
+git diff --exit-code
+npm run validate
+```
+
+If `config/initial-server-config.json` changes but generated artifacts are not
+committed, the PR check fails.
+
+## Production Mirror
+
+This repository is the source repository for the website. Production GitHub
+Pages is mirrored to:
+
+https://github.com/simplegear-org/simplegear-site
+
+On push to `main`, GitHub Actions validates the site and publishes an
+append-only mirror commit to `simplegear-org/simplegear-site:main`.
+
+Required secret in this repository:
+
+```text
+MIRROR_REPO_TOKEN
+```
+
+The token must have permission to push to `simplegear-org/simplegear-site`.
+
+Recommended repository flow:
+
+- create a `dev` branch;
+- open pull requests from feature branches into `dev`;
+- merge `dev` into `main` only after the `Validate site` check passes;
+- protect `main` from direct pushes, force pushes, and deletion.
 
 ## Related Repositories
 

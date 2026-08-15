@@ -1,7 +1,9 @@
 {
   "scripts": {
     "generate": "node scripts/generate-config-artifacts.mjs",
-    "validate": "node scripts/validate-site.mjs"
+    "check": "node scripts/validate-site.mjs && node scripts/test-deep-link-routing.mjs",
+    "validate": "npm run generate && npm run check",
+    "build": "npm run validate"
   },
   "dependencies": {
     "qrcode": "^1.5.4"

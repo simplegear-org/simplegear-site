@@ -17,6 +17,7 @@ const payloadTypeToHost = Object.freeze({
   peerlink_invite: 'invite',
   peerlink_server_config: 'config',
 });
+const legacyTypelessPayloadHost = 'invite';
 
 const strings = {
   en: {
@@ -777,14 +778,18 @@ function resolveOpenLink() {
     return false;
   }
   if (linkKind === 'pair') {
-    return `peerlink://pair?payload=${encodeURIComponent(payload)}`;
+    return buildAppLinkFromPayload(payload);
   }
   return buildAppLinkFromPayload(payload);
 }
 
 function buildAppLinkFromPayload(rawPayload) {
   const encodedPayload = encodeURIComponent(rawPayload);
-  const payloadType = extractPayloadType(rawPayload);
+  const payloadInfo = inspectPayload(rawPayload);
+  if (!payloadInfo.valid) {
+    return false;
+  }
+  const payloadType = payloadInfo.type;
   if (payloadType && !payloadTypeToHost[payloadType]) {
     return false;
   }
@@ -794,18 +799,24 @@ function buildAppLinkFromPayload(rawPayload) {
   if (linkKind === 'invite' && payloadType === 'peerlink_server_config') {
     return false;
   }
-  const targetHost = payloadTypeToHost[payloadType] ?? 'invite';
+  const targetHost = payloadTypeToHost[payloadType] ?? (linkKind === 'pair' ? 'pair' : legacyTypelessPayloadHost);
   return `peerlink://${targetHost}?payload=${encodedPayload}`;
 }
 
-function extractPayloadType(rawPayload) {
+function inspectPayload(rawPayload) {
   try {
     const normalized = rawPayload.replace(/-/g, '+').replace(/_/g, '/');
     const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
     const parsed = JSON.parse(atob(padded));
-    return typeof parsed?.type === 'string' ? parsed.type : null;
+    return {
+      valid: true,
+      type: typeof parsed?.type === 'string' ? parsed.type : null,
+    };
   } catch (_) {
-    return null;
+    return {
+      valid: false,
+      type: null,
+    };
   }
 }
 

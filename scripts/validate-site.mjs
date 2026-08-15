@@ -36,15 +36,23 @@ function isWebSocketUrl(value) {
 function isHttpUrl(value) {
   try {
     const url = new URL(value);
-    return ['https:', 'http:'].includes(url.protocol) && validHost(url.hostname);
+    return url.protocol === 'https:' && validHost(url.hostname);
   } catch (_) {
     return false;
   }
 }
 
-function isTurnUrl(value) {
+function parseTurnUrl(value) {
   const match = /^(turns?):([^:/?]+|\[[^\]]+\])(?::\d{1,5})?(?:\?transport=(udp|tcp))?$/.exec(value);
-  return Boolean(match && validHost(match[2].replace(/^\[|\]$/g, '')));
+  if (!match) return null;
+  const host = match[2].replace(/^\[|\]$/g, '');
+  const portMatch = /:(\d{1,5})(?:\?|$)/.exec(value);
+  const port = portMatch ? Number(portMatch[1]) : null;
+  return {
+    host,
+    port,
+    valid: validHost(host) && (port === null || (Number.isInteger(port) && port >= 1 && port <= 65535)),
+  };
 }
 
 function validHost(hostname) {
@@ -53,6 +61,26 @@ function validHost(hostname) {
 
 function canonical(value) {
   return JSON.stringify(value);
+}
+
+function hasDuplicates(values) {
+  return new Set(values).size !== values.length;
+}
+
+function validateUrlList(name, values, predicate, { allowEmpty = false } = {}) {
+  if (!Array.isArray(values)) {
+    fail(`initial config: ${name} must be an array`);
+    return;
+  }
+  if (!allowEmpty && values.length === 0) {
+    fail(`initial config: ${name} must not be empty`);
+  }
+  if (values.some((url) => typeof url !== 'string' || !predicate(url))) {
+    fail(`initial config: invalid ${name} URLs`);
+  }
+  if (hasDuplicates(values)) {
+    fail(`initial config: duplicate ${name} URLs`);
+  }
 }
 
 const requiredFiles = [
@@ -83,28 +111,34 @@ requiredFiles.forEach((file) => {
 const config = readJson('config/initial-server-config.json');
 const generated = readJson('config/initial-server-config.generated.json');
 readJson('manifest.json');
-readJson('.well-known/assetlinks.json');
-readJson('.well-known/apple-app-site-association');
+const assetlinks = readJson('.well-known/assetlinks.json');
+const aasa = readJson('.well-known/apple-app-site-association');
 
 if (config) {
   if (config.type !== 'peerlink_server_config') fail('initial config: invalid type');
   if (config.version !== 1) fail('initial config: unsupported version');
-  if (!Array.isArray(config.bootstrap) || config.bootstrap.some((url) => !isWebSocketUrl(url))) {
-    fail('initial config: invalid bootstrap URLs');
-  }
-  if (!Array.isArray(config.relay) || config.relay.some((url) => !isHttpUrl(url))) {
-    fail('initial config: invalid relay URLs');
-  }
-  if (!Array.isArray(config.push) || config.push.some((url) => !isHttpUrl(url))) {
-    fail('initial config: invalid push URLs');
-  }
-  if (!Array.isArray(config.turn) || config.turn.some((entry) => (
-    !entry ||
-    !isTurnUrl(entry.url) ||
-    typeof entry.username !== 'string' ||
-    typeof entry.password !== 'string'
-  ))) {
-    fail('initial config: invalid TURN entries');
+  validateUrlList('bootstrap', config.bootstrap, isWebSocketUrl);
+  validateUrlList('relay', config.relay, isHttpUrl);
+  validateUrlList('push', config.push, isHttpUrl, { allowEmpty: true });
+  if (!Array.isArray(config.turn)) {
+    fail('initial config: TURN must be an array');
+  } else {
+    config.turn.forEach((entry, index) => {
+      const turnUrl = typeof entry?.url === 'string' ? parseTurnUrl(entry.url) : null;
+      if (!entry || !turnUrl?.valid) fail(`initial config: invalid TURN url at index ${index}`);
+      if (typeof entry?.username !== 'string' || entry.username.length === 0) {
+        fail(`initial config: invalid TURN username at index ${index}`);
+      }
+      if (typeof entry?.password !== 'string' || entry.password.length === 0) {
+        fail(`initial config: invalid TURN password at index ${index}`);
+      }
+      if (typeof entry?.priority !== 'number' || !Number.isFinite(entry.priority)) {
+        fail(`initial config: invalid TURN priority at index ${index}`);
+      }
+    });
+    if (hasDuplicates(config.turn.map((entry) => entry?.url).filter(Boolean))) {
+      fail('initial config: duplicate TURN URLs');
+    }
   }
 }
 
@@ -116,6 +150,29 @@ if (config && generated) {
   const decoded = JSON.parse(Buffer.from(generated.payload, 'base64url').toString('utf8'));
   if (canonical(decoded) !== canonical(config)) fail('generated payload does not decode to canonical config');
   if (generated.payload.length > maxPayloadLength) fail('generated payload exceeds client payload limit');
+}
+
+if (assetlinks) {
+  const entries = Array.isArray(assetlinks) ? assetlinks : [];
+  const androidTarget = entries.find((entry) => entry?.target?.namespace === 'android_app');
+  if (androidTarget?.target?.package_name !== 'org.simplegear.peerlinkapp') {
+    fail('assetlinks: package_name must be org.simplegear.peerlinkapp');
+  }
+  const fingerprints = androidTarget?.target?.sha256_cert_fingerprints;
+  const fingerprintPattern = /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/;
+  if (!Array.isArray(fingerprints) || fingerprints.length === 0) {
+    fail('assetlinks: sha256_cert_fingerprints must be a non-empty array');
+  } else if (fingerprints.some((fingerprint) => typeof fingerprint !== 'string' || !fingerprintPattern.test(fingerprint))) {
+    fail('assetlinks: invalid SHA-256 fingerprint format');
+  }
+}
+
+if (aasa) {
+  const details = aasa?.applinks?.details;
+  const expectedPaths = ['/invite*', '/pair*', '/config*'];
+  const app = Array.isArray(details) ? details.find((entry) => entry?.appID === '36WZ459LJ7.org.simplegear.peerlinkapp') : null;
+  if (!app) fail('AASA: missing expected appID');
+  if (canonical(app?.paths) !== canonical(expectedPaths)) fail('AASA: unexpected applinks paths');
 }
 
 const htmlFiles = [];
@@ -138,9 +195,14 @@ for (const file of htmlFiles) {
   if (html.includes('<script>')) fail(`${file}: inline script is not allowed`);
   if (html.includes('site.js?v=') && !html.includes(`site.js?v=${assetVersion}`)) fail(`${file}: stale site.js version`);
   if (html.includes('site.css?v=') && !html.includes(`site.css?v=${assetVersion}`)) fail(`${file}: stale site.css version`);
-  if (['invite/index.html', 'pair/index.html', 'config/index.html'].includes(file)) {
+  if (['invite/index.html', 'pair/index.html', 'config/index.html', 'invite.html', 'pair.html', 'config.html'].includes(file)) {
     if (!html.includes('content="noindex,nofollow"')) fail(`${file}: missing noindex,nofollow`);
     if (!html.includes('content="no-referrer"')) fail(`${file}: missing no-referrer`);
+  }
+  if (html.includes('Content-Security-Policy')) {
+    if (html.includes('unsafe-inline') || html.includes('unsafe-eval') || html.includes('*')) {
+      fail(`${file}: weak CSP directive found`);
+    }
   }
   let match;
   while ((match = localHrefPattern.exec(html))) {
@@ -190,6 +252,9 @@ const fullTreeText = scanFiles.map((file) => fs.readFileSync(file, 'utf8')).join
 const qr = fs.readFileSync(path.join(root, 'initial-server-config-qr.svg'), 'utf8');
 if (!qr.includes('Generated from config/initial-server-config.json')) {
   fail('initial-server-config-qr.svg: missing generated marker');
+}
+if (generated && !qr.includes(`data-generated-url="${generated.url.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}"`)) {
+  fail('initial-server-config-qr.svg: generated URL marker does not match generated config URL');
 }
 
 if (errors.length) {

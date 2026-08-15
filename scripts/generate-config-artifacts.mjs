@@ -7,7 +7,18 @@ const configPath = path.join(root, 'config', 'initial-server-config.json');
 const qrPath = path.join(root, 'initial-server-config-qr.svg');
 const generatedPath = path.join(root, 'config', 'initial-server-config.generated.json');
 
-const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+let config;
+const configSource = fs.readFileSync(configPath, 'utf8');
+if (!configSource.trim()) {
+  console.error(`${path.relative(root, configPath)} is empty`);
+  process.exit(1);
+}
+try {
+  config = JSON.parse(configSource);
+} catch (error) {
+  console.error(`${path.relative(root, configPath)} is not valid JSON: ${error.message}`);
+  process.exit(1);
+}
 const canonicalJson = JSON.stringify(config);
 const payload = Buffer.from(canonicalJson, 'utf8').toString('base64url');
 const url = `https://simplegear.org/config?payload=${payload}`;
@@ -32,7 +43,7 @@ let svg = await QRCode.toString(url, {
 
 svg = svg.replace(
   '<svg ',
-  '<svg data-generated-from="config/initial-server-config.json" '
+  `<svg data-generated-from="config/initial-server-config.json" data-generated-url="${escapeXmlAttribute(url)}" `
 );
 
 fs.writeFileSync(
@@ -41,3 +52,11 @@ fs.writeFileSync(
 );
 
 console.log(`Generated ${path.relative(root, generatedPath)} and ${path.relative(root, qrPath)}`);
+
+function escapeXmlAttribute(value) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}

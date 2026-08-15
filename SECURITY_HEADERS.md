@@ -11,6 +11,7 @@ ACTION REQUIRED:
 - Confirm `http://simplegear.org/...` redirects to `https://simplegear.org/...`
   without losing query strings.
 - Block force pushes and branch deletion on `main`.
+- Require the `Validate site` GitHub Actions check before merging to `main`.
 - Enable Private Vulnerability Reporting.
 
 Recommended production headers:
@@ -26,6 +27,11 @@ Cross-Origin-Opener-Policy: same-origin
 
 Do not claim these headers are active until verified on the live site.
 
-Live check on 2026-08-14 showed `http://simplegear.org/invite?payload=TEST`
-returning `200 OK` instead of an HTTPS redirect, so HTTPS enforcement still
-needs production configuration.
+Live checks on 2026-08-15 showed `http://simplegear.org/` and
+`http://simplegear.org/invite/?payload=TEST` returning `200 OK` instead of an
+HTTPS redirect, so HTTPS enforcement still needs production configuration.
+
+Live check on 2026-08-15 showed
+`https://simplegear.org/.well-known/apple-app-site-association` returning
+`200 OK` with `content-type: application/octet-stream`. If Apple validation
+requires `application/json`, configure that header at the edge.
