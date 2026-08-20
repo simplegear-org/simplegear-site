@@ -32,6 +32,7 @@ const strings = {
       appStore: 'App Store',
       googlePlay: 'Google Play',
       comingSoon: 'coming soon',
+      availableNow: 'available now',
       privacyPolicy: 'Privacy Policy',
     },
     home: {
@@ -59,7 +60,7 @@ const strings = {
       sourceBody: 'We do not ask users to trust a black box. The mobile app and server stack are public.',
       downloadEyebrow: 'Download',
       downloadTitle: 'Store links',
-      downloadBody: 'App Store and Google Play pages are coming. The buttons are placeholders for now.',
+      downloadBody: 'PeerLink X is now available on Google Play. The App Store version is coming soon. Download PeerLink X for Android today, or check back soon for the iOS release.',
     },
     invite: {
       metaTitle: 'PeerLink X Invite',
@@ -151,6 +152,7 @@ const strings = {
       appStore: 'App Store',
       googlePlay: 'Google Play',
       comingSoon: 'скоро',
+      availableNow: 'доступно сейчас',
       privacyPolicy: 'Политика конфиденциальности',
     },
     home: {
@@ -178,7 +180,7 @@ const strings = {
       sourceBody: 'Мы не просим доверять черному ящику. Код мобильного приложения и серверной части открыт.',
       downloadEyebrow: 'Скачать',
       downloadTitle: 'Ссылки на магазины',
-      downloadBody: 'Страницы App Store и Google Play появятся позже. Пока кнопки работают как заглушки.',
+      downloadBody: 'PeerLink X уже доступен в Google Play. Версия для App Store скоро появится. Скачайте PeerLink X для Android уже сейчас или следите за выходом версии для iOS.',
     },
     invite: {
       metaTitle: 'Приглашение PeerLink X',
@@ -270,6 +272,7 @@ const strings = {
       appStore: 'App Store',
       googlePlay: 'Google Play',
       comingSoon: 'próximamente',
+      availableNow: 'disponible maintenant',
       privacyPolicy: 'Política de privacidad',
     },
     home: {
@@ -297,7 +300,7 @@ const strings = {
       sourceBody: 'No pedimos confiar en una caja negra. La app móvil y la pila de servidores son públicas.',
       downloadEyebrow: 'Descargar',
       downloadTitle: 'Enlaces de tiendas',
-      downloadBody: 'Las páginas de App Store y Google Play llegarán pronto. Por ahora los botones son marcadores.',
+      downloadBody: 'PeerLink X ya está disponible en Google Play. La versión para App Store estará disponible próximamente. Descarga PeerLink X para Android ahora o vuelve pronto para la versión de iOS.',
     },
     invite: {
       metaTitle: 'Invitación PeerLink X',
@@ -389,6 +392,7 @@ const strings = {
       appStore: 'App Store',
       googlePlay: 'Google Play',
       comingSoon: '即将推出',
+      availableNow: '现已推出',
       privacyPolicy: '隐私政策',
     },
     home: {
@@ -416,7 +420,7 @@ const strings = {
       sourceBody: '我们不要求用户信任黑盒。移动应用和服务器栈都是公开的。',
       downloadEyebrow: '下载',
       downloadTitle: '应用商店链接',
-      downloadBody: 'App Store 和 Google Play 页面即将推出。当前按钮暂为占位。',
+      downloadBody: 'PeerLink X 现已在 Google Play 上架。App Store 版本即将推出。 立即下载 Android 版 PeerLink X，或稍后回来查看 iOS 版本的发布消息。',
     },
     invite: {
       metaTitle: 'PeerLink X 邀请',
@@ -508,6 +512,7 @@ const strings = {
       appStore: 'App Store',
       googlePlay: 'Google Play',
       comingSoon: 'bientôt',
+      availableNow: 'disponible ahora',
       privacyPolicy: 'Politique de confidentialité',
     },
     home: {
@@ -535,7 +540,7 @@ const strings = {
       sourceBody: 'Nous ne demandons pas de faire confiance à une boîte noire. L’app mobile et la pile serveur sont publiques.',
       downloadEyebrow: 'Télécharger',
       downloadTitle: 'Liens des stores',
-      downloadBody: 'Les pages App Store et Google Play arrivent. Pour l’instant, les boutons sont des placeholders.',
+      downloadBody: 'PeerLink X est désormais disponible sur Google Play. La version App Store sera bientôt disponible. Téléchargez PeerLink X pour Android dès maintenant ou revenez bientôt pour la version iOS.',
     },
     invite: {
       metaTitle: 'Invitation PeerLink X',
