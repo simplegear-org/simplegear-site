@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#060D1A",
     "theme_color": "#060D1A",
-    "description": "Open-source private messenger with chats, calls, media, and self-hosted communication servers.",
+    "description": "Open-source encrypted messenger with chats, calls, media, and self-hosted communication servers.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
