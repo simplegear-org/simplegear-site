@@ -60,7 +60,7 @@ const strings = {
       sourceBody: 'We do not ask users to trust a black box. The mobile app and server stack are public.',
       downloadEyebrow: 'Download',
       downloadTitle: 'Store links',
-      downloadBody: 'PeerLink X is now available on Google Play. The App Store version is coming soon. Download PeerLink X for Android today, or check back soon for the iOS release.',
+      downloadBody: 'PeerLink X is available on the App Store and Google Play.',
     },
     invite: {
       metaTitle: 'PeerLink X Invite',
@@ -180,7 +180,7 @@ const strings = {
       sourceBody: 'Мы не просим доверять черному ящику. Код мобильного приложения и серверной части открыт.',
       downloadEyebrow: 'Скачать',
       downloadTitle: 'Ссылки на магазины',
-      downloadBody: 'PeerLink X уже доступен в Google Play. Версия для App Store скоро появится. Скачайте PeerLink X для Android уже сейчас или следите за выходом версии для iOS.',
+      downloadBody: 'PeerLink X доступен в App Store и Google Play.',
     },
     invite: {
       metaTitle: 'Приглашение PeerLink X',
@@ -300,7 +300,7 @@ const strings = {
       sourceBody: 'No pedimos confiar en una caja negra. La app móvil y la pila de servidores son públicas.',
       downloadEyebrow: 'Descargar',
       downloadTitle: 'Enlaces de tiendas',
-      downloadBody: 'PeerLink X ya está disponible en Google Play. La versión para App Store estará disponible próximamente. Descarga PeerLink X para Android ahora o vuelve pronto para la versión de iOS.',
+      downloadBody: 'PeerLink X está disponible en App Store y Google Play.',
     },
     invite: {
       metaTitle: 'Invitación PeerLink X',
@@ -420,7 +420,7 @@ const strings = {
       sourceBody: '我们不要求用户信任黑盒。移动应用和服务器栈都是公开的。',
       downloadEyebrow: '下载',
       downloadTitle: '应用商店链接',
-      downloadBody: 'PeerLink X 现已在 Google Play 上架。App Store 版本即将推出。 立即下载 Android 版 PeerLink X，或稍后回来查看 iOS 版本的发布消息。',
+      downloadBody: 'PeerLink X 现已在 App Store 和 Google Play 上架。',
     },
     invite: {
       metaTitle: 'PeerLink X 邀请',
@@ -540,7 +540,7 @@ const strings = {
       sourceBody: 'Nous ne demandons pas de faire confiance à une boîte noire. L’app mobile et la pile serveur sont publiques.',
       downloadEyebrow: 'Télécharger',
       downloadTitle: 'Liens des stores',
-      downloadBody: 'PeerLink X est désormais disponible sur Google Play. La version App Store sera bientôt disponible. Téléchargez PeerLink X pour Android dès maintenant ou revenez bientôt pour la version iOS.',
+      downloadBody: 'PeerLink X est disponible sur l’App Store et Google Play.',
     },
     invite: {
       metaTitle: 'Invitation PeerLink X',
