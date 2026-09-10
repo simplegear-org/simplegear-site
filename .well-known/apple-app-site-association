@@ -6,6 +6,7 @@
         "appID": "36WZ459LJ7.org.simplegear.peerlinkapp",
         "paths": [
           "/invite*",
+          "/i/*",
           "/pair*",
           "/config*"
         ]

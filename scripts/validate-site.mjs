@@ -172,7 +172,7 @@ if (assetlinks) {
 
 if (aasa) {
   const details = aasa?.applinks?.details;
-  const expectedPaths = ['/invite*', '/pair*', '/config*'];
+  const expectedPaths = ['/invite*', '/i/*', '/pair*', '/config*'];
   const app = Array.isArray(details) ? details.find((entry) => entry?.appID === '36WZ459LJ7.org.simplegear.peerlinkapp') : null;
   if (!app) fail('AASA: missing expected appID');
   if (canonical(app?.paths) !== canonical(expectedPaths)) fail('AASA: unexpected applinks paths');
