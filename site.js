@@ -7,6 +7,11 @@ const openInviteLinks = Array.from(document.querySelectorAll('#open-invite-link'
 const initialConfigLinks = Array.from(document.querySelectorAll('[data-initial-config-link]'));
 const inviteCard = document.getElementById('invite-card');
 const inviteMessage = document.getElementById('invite-message');
+const inviteStatusTitle = document.getElementById('invite-status-title');
+const inviterName = document.getElementById('inviter-name');
+const inviteStoreFallback = document.getElementById('invite-store-fallback');
+const inviteAppStore = document.getElementById('invite-app-store');
+const inviteGooglePlay = document.getElementById('invite-google-play');
 const page = document.body.dataset.page || 'home';
 const linkKind = document.body.dataset.linkKind || detectLinkKind(window.location.pathname);
 const pagesWithPayloadState = new Set(['invite', 'pair', 'config', 'fallback']);
@@ -18,6 +23,7 @@ const payloadTypeToHost = Object.freeze({
   peerlink_server_config: 'config',
 });
 const legacyTypelessPayloadHost = 'invite';
+const inviteApiBaseUrl = 'https://tangash.org/invites';
 
 const strings = {
   en: {
@@ -622,6 +628,63 @@ const strings = {
   },
 };
 
+const shortInviteStrings = {
+  en: {
+    eyebrow: 'PeerLink X invite', title: 'You are invited to PeerLink X',
+    lead: 'We will open PeerLink X if it is installed. Otherwise, choose your store below.',
+    homeButton: 'Home', checkingTitle: 'Checking invite',
+    checkingMessage: 'Checking this invitation safely.',
+    storeEyebrow: 'Get PeerLink X', storeTitle: 'Continue after installing',
+    storeBody: 'This invite is kept in the Google Play install link. On iPhone, return to this page and tap Open PeerLink X after installation.',
+    unavailableTitle: 'Invite unavailable', unavailableMessage: 'This invite is invalid or has expired.',
+    inviter: '{name} invites you to PeerLink X',
+  },
+  ru: {
+    eyebrow: 'Приглашение в PeerLink X', title: 'Вас приглашают в PeerLink X',
+    lead: 'Мы откроем PeerLink X, если он установлен. Иначе выберите магазин ниже.',
+    homeButton: 'Главная', checkingTitle: 'Проверяем приглашение',
+    checkingMessage: 'Безопасно проверяем это приглашение.',
+    storeEyebrow: 'Установить PeerLink X', storeTitle: 'Продолжите после установки',
+    storeBody: 'В Google Play token передаётся в ссылке установки. На iPhone вернитесь на эту страницу и нажмите «Открыть PeerLink X» после установки.',
+    unavailableTitle: 'Приглашение недоступно', unavailableMessage: 'Это приглашение некорректно или истекло.',
+    inviter: '{name} приглашает вас в PeerLink X',
+  },
+  es: {
+    eyebrow: 'Invitación a PeerLink X', title: 'Te invitan a PeerLink X',
+    lead: 'Abriremos PeerLink X si está instalado. De lo contrario, elige una tienda abajo.',
+    homeButton: 'Inicio', checkingTitle: 'Comprobando invitación',
+    checkingMessage: 'Comprobando esta invitación de forma segura.',
+    storeEyebrow: 'Obtener PeerLink X', storeTitle: 'Continúa después de instalar',
+    storeBody: 'La invitación se conserva en el enlace de instalación de Google Play. En iPhone, vuelve a esta página y toca Abrir PeerLink X después de instalar.',
+    unavailableTitle: 'Invitación no disponible', unavailableMessage: 'Esta invitación no es válida o ha caducado.',
+    inviter: '{name} te invita a PeerLink X',
+  },
+  zh: {
+    eyebrow: 'PeerLink X 邀请', title: '您受邀加入 PeerLink X',
+    lead: '如果已安装，我们会打开 PeerLink X；否则请在下方选择商店。',
+    homeButton: '主页', checkingTitle: '正在检查邀请',
+    checkingMessage: '正在安全检查此邀请。',
+    storeEyebrow: '获取 PeerLink X', storeTitle: '安装后继续',
+    storeBody: '邀请会保留在 Google Play 安装链接中。iPhone 用户安装后请返回此页面并点击“打开 PeerLink X”。',
+    unavailableTitle: '邀请不可用', unavailableMessage: '此邀请无效或已过期。',
+    inviter: '{name} 邀请您加入 PeerLink X',
+  },
+  fr: {
+    eyebrow: 'Invitation PeerLink X', title: 'Vous êtes invité à rejoindre PeerLink X',
+    lead: 'Nous ouvrirons PeerLink X s’il est installé. Sinon, choisissez votre boutique ci-dessous.',
+    homeButton: 'Accueil', checkingTitle: 'Vérification de l’invitation',
+    checkingMessage: 'Vérification sécurisée de cette invitation.',
+    storeEyebrow: 'Obtenir PeerLink X', storeTitle: 'Continuez après l’installation',
+    storeBody: 'L’invitation est conservée dans le lien d’installation Google Play. Sur iPhone, revenez sur cette page et touchez Ouvrir PeerLink X après l’installation.',
+    unavailableTitle: 'Invitation indisponible', unavailableMessage: 'Cette invitation est invalide ou a expiré.',
+    inviter: '{name} vous invite à rejoindre PeerLink X',
+  },
+};
+
+Object.entries(shortInviteStrings).forEach(([language, values]) => {
+  strings[language].shortInvite = values;
+});
+
 function readKey(language, key) {
   return key.split('.').reduce((value, part) => value?.[part], strings[language]);
 }
@@ -757,6 +820,68 @@ function configureOpenLink() {
   });
 }
 
+async function configureShortInviteLanding() {
+  const token = shortInviteToken();
+  if (!token) {
+    return;
+  }
+  try {
+    const response = await fetch(`${inviteApiBaseUrl}/${token}`, {
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error('invite unavailable');
+    }
+    const manifest = await response.json();
+    const username = validInviteUsername(manifest?.inviter?.username);
+    if (username && inviterName) {
+      inviterName.textContent = translate('shortInvite.inviter', document.documentElement.lang).replace('{name}', username);
+      inviterName.hidden = false;
+    }
+    showShortInviteStores(token);
+  } catch (_) {
+    if (inviteStatusTitle) {
+      inviteStatusTitle.textContent = translate('shortInvite.unavailableTitle', document.documentElement.lang);
+    }
+    if (inviteMessage) {
+      inviteMessage.textContent = translate('shortInvite.unavailableMessage', document.documentElement.lang);
+    }
+    openInviteLinks.forEach((link) => {
+      link.hidden = true;
+    });
+  }
+}
+
+function shortInviteToken() {
+  const match = /^\/i\/([A-Za-z0-9_-]{22,128})$/.exec(window.location.pathname);
+  return match ? match[1] : null;
+}
+
+function validInviteUsername(value) {
+  const normalized = typeof value === 'string' ? value.trim() : '';
+  if (!normalized || normalized.length > 64 || /[\x00-\x1F\x7F]/.test(normalized)) {
+    return null;
+  }
+  return normalized;
+}
+
+function showShortInviteStores(token) {
+  if (!inviteStoreFallback) {
+    return;
+  }
+  const referrer = encodeURIComponent(`invite_token=${token}`);
+  const googlePlayUrl = `https://play.google.com/store/apps/details?id=org.simplegear.peerlinkapp&referrer=${referrer}`;
+  if (inviteGooglePlay) {
+    inviteGooglePlay.href = googlePlayUrl;
+  }
+  const isAndroid = /Android/i.test(window.navigator.userAgent);
+  const isApple = /iPhone|iPad|iPod/i.test(window.navigator.userAgent);
+  if (inviteGooglePlay) inviteGooglePlay.hidden = isApple;
+  if (inviteAppStore) inviteAppStore.hidden = isAndroid;
+  inviteStoreFallback.hidden = false;
+}
+
 function showResolvedLink(appLink) {
   if (inviteCard) {
     inviteCard.hidden = false;
@@ -793,11 +918,8 @@ function resolveOpenLink() {
 }
 
 function resolveShortInviteUrl() {
-  const match = /^\/i\/([A-Za-z0-9_-]{22,128})$/.exec(window.location.pathname);
-  if (!match) {
-    return null;
-  }
-  return `${window.location.origin}/i/${match[1]}`;
+  const token = shortInviteToken();
+  return token ? `${window.location.origin}/i/${token}` : null;
 }
 
 function buildAppLinkFromPayload(rawPayload) {
@@ -893,6 +1015,7 @@ document.querySelectorAll('[data-lang]').forEach((button) => {
   });
 });
 
-configureInitialConfigLinks();
-configureOpenLink();
 applyLanguage(preferredLanguage());
+configureInitialConfigLinks();
+configureShortInviteLanding();
+configureOpenLink();

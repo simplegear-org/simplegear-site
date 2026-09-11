@@ -17,7 +17,11 @@ Functions:
 
 Short contact invites use `https://simplegear.org/i/<token>`. On a web
 fallback, `site.js` opens the installed app through `peerlink://invite?url=…`;
-the app validates that nested URL before resolving the token.
+the app validates that nested URL before resolving the token. If the app is
+not installed, the landing page resolves only the signed inviter display name,
+shows the appropriate store link, and passes `invite_token` through the Google
+Play Install Referrer. The browser never renders peer IDs, identity bundles,
+server metadata, or manifests.
 
 ## Initial Server Configuration
 

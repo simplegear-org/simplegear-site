@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const errors = [];
-const assetVersion = '20260910-1';
+const assetVersion = '20260912-1';
 const maxPayloadLength = 65536;
 const maxPairDataLength = 65536;
 

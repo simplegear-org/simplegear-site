@@ -55,6 +55,10 @@ function resolveShortInviteLink(pathname, origin = 'https://simplegear.org') {
   return match ? `peerlink://invite?url=${encodeURIComponent(`${origin}/i/${match[1]}`)}` : null;
 }
 
+function resolveGooglePlayInviteLink(token) {
+  return `https://play.google.com/store/apps/details?id=org.simplegear.peerlinkapp&referrer=${encodeURIComponent(`invite_token=${token}`)}`;
+}
+
 function buildAppLinkFromPayload(linkKind, rawPayload) {
   const payloadInfo = inspectPayload(rawPayload);
   if (!payloadInfo.valid) return false;
@@ -98,6 +102,10 @@ if (shortInvite !== 'peerlink://invite?url=https%3A%2F%2Fsimplegear.org%2Fi%2Fab
 }
 if (resolveShortInviteLink('/i/not-a-token') !== null) {
   fail('short invite fallback: malformed token must be rejected');
+}
+const playInvite = resolveGooglePlayInviteLink('abcdefghijklmnopqrstuv');
+if (!playInvite.endsWith('referrer=invite_token%3Dabcdefghijklmnopqrstuv')) {
+  fail(`short invite Google Play context: unexpected URL ${playInvite}`);
 }
 
 try {
