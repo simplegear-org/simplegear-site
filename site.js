@@ -770,6 +770,10 @@ function showResolvedLink(appLink) {
 }
 
 function resolveOpenLink() {
+  const shortInviteUrl = resolveShortInviteUrl();
+  if (shortInviteUrl) {
+    return `peerlink://invite?url=${encodeURIComponent(shortInviteUrl)}`;
+  }
   if (linkKind === 'pair' && pairingData) {
     if (pairingData.length > maxPairDataLength) {
       return false;
@@ -786,6 +790,14 @@ function resolveOpenLink() {
     return buildAppLinkFromPayload(payload);
   }
   return buildAppLinkFromPayload(payload);
+}
+
+function resolveShortInviteUrl() {
+  const match = /^\/i\/([A-Za-z0-9_-]{22,128})$/.exec(window.location.pathname);
+  if (!match) {
+    return null;
+  }
+  return `${window.location.origin}/i/${match[1]}`;
 }
 
 function buildAppLinkFromPayload(rawPayload) {

@@ -15,6 +15,10 @@ Functions:
 - privacy policy
 - initial server configuration QR
 
+Short contact invites use `https://simplegear.org/i/<token>`. On a web
+fallback, `site.js` opens the installed app through `peerlink://invite?url=…`;
+the app validates that nested URL before resolving the token.
+
 ## Initial Server Configuration
 
 The canonical source is `config/initial-server-config.json`.

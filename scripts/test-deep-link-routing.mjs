@@ -50,6 +50,11 @@ function resolveOpenLink({ linkKind, payload = null, pairingData = null }) {
   return buildAppLinkFromPayload(linkKind, payload);
 }
 
+function resolveShortInviteLink(pathname, origin = 'https://simplegear.org') {
+  const match = /^\/i\/([A-Za-z0-9_-]{22,128})$/.exec(pathname);
+  return match ? `peerlink://invite?url=${encodeURIComponent(`${origin}/i/${match[1]}`)}` : null;
+}
+
 function buildAppLinkFromPayload(linkKind, rawPayload) {
   const payloadInfo = inspectPayload(rawPayload);
   if (!payloadInfo.valid) return false;
@@ -86,6 +91,14 @@ expectInvalid('unknown explicit payload type', 'invite', encodePayload({ type: '
 expectInvalid('malformed base64 payload', 'invite', 'not***base64');
 expectInvalid('invalid JSON payload', 'invite', Buffer.from('not json', 'utf8').toString('base64url'));
 expectInvalid('oversized payload', 'invite', 'a'.repeat(maxPayloadLength + 1));
+
+const shortInvite = resolveShortInviteLink('/i/abcdefghijklmnopqrstuv');
+if (shortInvite !== 'peerlink://invite?url=https%3A%2F%2Fsimplegear.org%2Fi%2Fabcdefghijklmnopqrstuv') {
+  fail(`short invite fallback: unexpected URL ${shortInvite}`);
+}
+if (resolveShortInviteLink('/i/not-a-token') !== null) {
+  fail('short invite fallback: malformed token must be rejected');
+}
 
 try {
   const exactLimitPayload = makeExactLimitPayload();
