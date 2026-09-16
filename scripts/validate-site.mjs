@@ -163,10 +163,16 @@ if (assetlinks) {
   }
   const fingerprints = androidTarget?.target?.sha256_cert_fingerprints;
   const fingerprintPattern = /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/;
+  const requiredFingerprints = [
+    'F4:84:60:3B:70:39:FB:78:57:DB:7B:F9:52:7E:46:B8:09:84:07:B8:FB:CD:F1:19:73:60:66:0D:54:3A:F6:57',
+    '2F:AE:6C:25:01:67:46:4A:2A:75:04:C4:16:EA:68:51:73:AE:9B:1B:B7:A3:6E:92:10:4E:EB:B7:2F:E9:03:13',
+  ];
   if (!Array.isArray(fingerprints) || fingerprints.length === 0) {
     fail('assetlinks: sha256_cert_fingerprints must be a non-empty array');
   } else if (fingerprints.some((fingerprint) => typeof fingerprint !== 'string' || !fingerprintPattern.test(fingerprint))) {
     fail('assetlinks: invalid SHA-256 fingerprint format');
+  } else if (!requiredFingerprints.every((fingerprint) => fingerprints.includes(fingerprint))) {
+    fail('assetlinks: missing required Android signing certificate fingerprint');
   }
 }
 
